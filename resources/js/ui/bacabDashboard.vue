@@ -117,7 +117,8 @@
             }
         },
         mounted(){
-            this.open('/home', 'Home')
+
+            this.open('/patients', 'Home')
             /* Scripts for css grid dashboard */
 
             $(document).ready(() => {
@@ -281,7 +282,7 @@
                 });
             }
 
-
+            this.$store.dispatch('general/bacabFirstData');
         }
 
     }
