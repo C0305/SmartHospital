@@ -20,8 +20,8 @@
                     <span class="navList__subheading-icon"><i :class="item.icon"></i></span>
                     <span class="navList__subheading-title">{{ item.name }}</span>
                 </div>
-                <ul class="subList subList--hidden">
-                    <li v-for="(itemm) in item.childs" class="subList__item"><span class="far fa-dot-circle"></span>{{' '+itemm.name }}</li>
+                <ul  class="subList subList--hidden" >
+                    <li v-for="(itemm) in item.childs" @click="open(itemm.route,itemm.name)"class="subList__item"><span class="far fa-dot-circle"></span>{{' '+itemm.name }}</li>
                 </ul>
             </template>
 
