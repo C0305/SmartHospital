@@ -3,7 +3,7 @@ import bacabDashboard from '../../bacabDashboard'
 import { layouts } from "./layouts";
 
 import home from './vroutes/home'
-import goals from './vroutes/goals'
+import patients from './vroutes/patients'
 import projects from './vroutes/projects';
 
 
@@ -26,7 +26,7 @@ export default [
                 component: Mirror,
                 children: [
                     ...home(layouts),
-                    ...goals(layouts),
+                    ...patients(layouts),
                     ...projects(layouts)]
             }
         ]

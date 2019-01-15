@@ -1,10 +1,10 @@
 
 import Home from '../../../views/home/index'
-import Goals from '../../../views/goals/index'
+import Patients from '../../../views/EHR/Patients/index'
 import Projects from '../../../views/proyects/index'
 
 export const layouts = {
     home: Home,
-    goals: Goals,
+    patients: Patients,
     projects: Projects
 };
