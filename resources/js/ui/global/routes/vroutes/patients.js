@@ -1,9 +1,9 @@
 export default layouts => [
     {
-        path: 'goals',
-        component: layouts.goals,
+        path: 'patients',
+        component: layouts.patients,
         props: route => ({
-            path: 'goals',
+            path: 'patients',
             back: false
         })
     }

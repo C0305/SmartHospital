@@ -14,7 +14,7 @@ export default {
             childs: [
                 {
                     name: 'Listado de Pacientes',
-                    route: '/projects',
+                    route: '/patients',
                     icon: 'fas fa-project-diagram',
                     childs: null,
                 }
