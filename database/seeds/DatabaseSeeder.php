@@ -5,12 +5,23 @@ use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Seed the application's database.
      *
      * @return void
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
+        // Global, need it to work
+        $this->call(MexicoStatesSeed::class);
+        //$this->call(PermissionTableSeeder::class);
+    
+        // Just 4 demo or dummy data
+        //$this->call(AccountsCustomerSeeder::class);
+        $this->call(UsersTableSeeder::class);
+        $this->call(ProceduresTypesTableSeeder::class);
+        $this->call(LocationsTableSeeder::class);
+        //$this->call(RoleTableSeeder::class);
+        //$this->call(RoleHasPermissionsTableSeeder::class);
+        //$this->call(DemoPatients::class);
     }
 }
