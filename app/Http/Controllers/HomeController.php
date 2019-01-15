@@ -31,6 +31,11 @@ class HomeController extends Controller
         $data = [
             'user' => [
                 'name' => Auth::user()->name,
+                'mainHeader' => [
+                    'weather' => 'true',
+                    'events' => 'false',
+                    'messages' => 'false',
+                ]
             ]
         ];
 
