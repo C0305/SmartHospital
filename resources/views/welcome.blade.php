@@ -7,6 +7,7 @@
     <title>BACAB PERFORMANCE SYSTEM</title>
 
     <!-- CSS -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="/css/app.css">
 </head>
 <body>

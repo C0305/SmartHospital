@@ -32,5 +32,5 @@
 </script>
 
 <style scoped>
-    .h30{height:30px}
+    .h30{ height:30px }
 </style>
