@@ -6,8 +6,10 @@
         <div class="box__body">
             <el-table
                     :data="dataArray"
+                    highlight-current-row
                     border>
                 <el-table-column
+                        fixed
                         type="index"
                         width="50"/>
                 <el-table-column>
@@ -19,9 +21,14 @@
                         :prop="header.prop"
                         :width="header.width"
                         :fixed="header.fixed">
-                    <slot :name="tableConfig[0].accionesSlot"></slot>
+                    <template slot="header" v-if="header.filterType">
+                        <div class="bacab-table__header-container">
+                            {{ header.name }}
+                        </div>
+                    </template>
                 </el-table-column>
                 <el-table-column
+                        fixed
                         v-if="tableConfig[0].acciones === true"
                         label="Acciones">
                     <slot :name="tableConfig[0].accionesSlot"></slot>
