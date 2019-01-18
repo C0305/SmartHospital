@@ -43,19 +43,39 @@
                     [
                         {
                             name: 'Nombre',
-                            prop: 'name'
+                            prop: 'name',
+                            filter: {
+                                type: 'date'
+                            }
                         },
                         {
                             name: 'Edad',
-                            prop: 'age'
+                            prop: 'age',
+                            filter: {
+                                type: 'input'
+                            }
                         },
                         {
                             name: 'Sexo',
-                            prop: 'sex'
+                            prop: 'sex',
+                            filter: {
+                                type: 'input'
+                            }
                         }
                     ]
                 ],
                 dataArray: [
+                    {
+                        id: 1,
+                        name: 'Bob Patiño',
+                        age: 6,
+
+                    },
+                    {
+                        id: 1,
+                        name: 'Bob Patiño',
+                        age: 6
+                    },
                     {
                         id: 1,
                         name: 'Bob Patiño',

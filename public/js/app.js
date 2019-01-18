@@ -4366,6 +4366,50 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     tableConfig: Array,
@@ -4482,15 +4526,32 @@ __webpack_require__.r(__webpack_exports__);
         accionesSlot: "acciones"
       }, [{
         name: 'Nombre',
-        prop: 'name'
+        prop: 'name',
+        filter: {
+          type: 'date'
+        }
       }, {
         name: 'Edad',
-        prop: 'age'
+        prop: 'age',
+        filter: {
+          type: 'input'
+        }
       }, {
         name: 'Sexo',
-        prop: 'sex'
+        prop: 'sex',
+        filter: {
+          type: 'input'
+        }
       }]],
       dataArray: [{
+        id: 1,
+        name: 'Bob Patiño',
+        age: 6
+      }, {
+        id: 1,
+        name: 'Bob Patiño',
+        age: 6
+      }, {
         id: 1,
         name: 'Bob Patiño',
         age: 6
@@ -74488,37 +74549,158 @@ var render = function() {
       [
         _c(
           "el-table",
-          { attrs: { data: _vm.dataArray, border: "" } },
+          {
+            attrs: {
+              data: _vm.dataArray,
+              "highlight-current-row": "",
+              border: ""
+            }
+          },
           [
-            _c("el-table-column", { attrs: { type: "index", width: "50" } }),
-            _vm._v(" "),
-            _c("el-table-column"),
-            _vm._v(" "),
-            _vm._l(_vm.tableConfig[1], function(header, index) {
-              return _c(
-                "el-table-column",
-                {
-                  key: index,
-                  attrs: {
-                    label: header.name,
-                    prop: header.prop,
-                    width: header.width,
-                    fixed: header.fixed
-                  }
-                },
-                [_vm._t(_vm.tableConfig[0].accionesSlot)],
-                2
-              )
+            _c("el-table-column", {
+              attrs: { fixed: "", type: "index", width: "50" }
             }),
             _vm._v(" "),
-            _vm.tableConfig[0].acciones === true
-              ? _c(
-                  "el-table-column",
-                  { attrs: { label: "Acciones" } },
-                  [_vm._t(_vm.tableConfig[0].accionesSlot)],
-                  2
-                )
-              : _vm._e()
+            _vm._l(_vm.tableConfig[1], function(header, index) {
+              return [
+                header.filter !== null
+                  ? _c("el-table-column", {
+                      key: index,
+                      attrs: {
+                        label: header.name,
+                        prop: header.prop,
+                        width: header.width,
+                        fixed: header.fixed
+                      },
+                      scopedSlots: _vm._u([
+                        {
+                          key: "header",
+                          fn: function(scope) {
+                            return [
+                              _c(
+                                "div",
+                                {
+                                  staticClass: "bacab-table__header-container",
+                                  staticStyle: { display: "grid" }
+                                },
+                                [
+                                  _c(
+                                    "label",
+                                    {
+                                      staticClass:
+                                        "bacab-table__header-container__item"
+                                    },
+                                    [_vm._v(_vm._s(header.name))]
+                                  ),
+                                  _vm._v(" "),
+                                  header.filter.type === "input"
+                                    ? _c("el-input", {
+                                        staticClass:
+                                          "bacab-table__header-container__item",
+                                        staticStyle: { width: "100%" },
+                                        attrs: {
+                                          size: "mini",
+                                          placeholder: "Type to search"
+                                        },
+                                        model: {
+                                          value: _vm.search,
+                                          callback: function($$v) {
+                                            _vm.search = $$v
+                                          },
+                                          expression: "search"
+                                        }
+                                      })
+                                    : _vm._e(),
+                                  _vm._v(" "),
+                                  header.filter.type === "date"
+                                    ? _c("el-date-picker", {
+                                        staticStyle: { width: "100%" },
+                                        attrs: {
+                                          type: "daterange",
+                                          size: "mini",
+                                          "range-separator": "To",
+                                          "start-placeholder": "Start date",
+                                          "end-placeholder": "End date"
+                                        },
+                                        model: {
+                                          value: _vm.value6,
+                                          callback: function($$v) {
+                                            _vm.value6 = $$v
+                                          },
+                                          expression: "value6"
+                                        }
+                                      })
+                                    : _vm._e(),
+                                  _vm._v(" "),
+                                  header.filter.type === "select"
+                                    ? _c(
+                                        "el-select",
+                                        {
+                                          attrs: {
+                                            multiple: "",
+                                            placeholder: "Select"
+                                          }
+                                        },
+                                        _vm._l(
+                                          header.filter.selectOptions,
+                                          function(item) {
+                                            return _c("el-option", {
+                                              key: item.value,
+                                              attrs: {
+                                                label: item.label,
+                                                value: item.value
+                                              }
+                                            })
+                                          }
+                                        ),
+                                        1
+                                      )
+                                    : _vm._e()
+                                ],
+                                1
+                              )
+                            ]
+                          }
+                        }
+                      ])
+                    })
+                  : _c("el-table-column", {
+                      key: index,
+                      attrs: {
+                        label: header.name,
+                        prop: header.prop,
+                        width: header.width,
+                        fixed: header.fixed
+                      },
+                      scopedSlots: _vm._u([
+                        {
+                          key: "header",
+                          fn: function(scope) {
+                            return [
+                              _c(
+                                "div",
+                                {
+                                  staticClass: "bacab-table__header-container",
+                                  staticStyle: { display: "grid" }
+                                },
+                                [
+                                  _c(
+                                    "label",
+                                    {
+                                      staticClass:
+                                        "bacab-table__header-container__item"
+                                    },
+                                    [_vm._v(_vm._s(header.name))]
+                                  )
+                                ]
+                              )
+                            ]
+                          }
+                        }
+                      ])
+                    })
+              ]
+            })
           ],
           2
         )
@@ -90721,9 +90903,9 @@ if (token) {
   console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
-if (Object({"MIX_PUSHER_APP_CLUSTER":"mt1","MIX_PUSHER_APP_KEY":"","NODE_ENV":"development"}).APP_ENV === 'local') {
+if (Object({"MIX_PUSHER_APP_KEY":"6b7f0e72dc2f462b2a8b","MIX_PUSHER_APP_CLUSTER":"mt1","NODE_ENV":"development"}).APP_ENV === 'local') {
   window.axios.defaults.baseURL = '';
-} else if (Object({"MIX_PUSHER_APP_CLUSTER":"mt1","MIX_PUSHER_APP_KEY":"","NODE_ENV":"development"}).APP_ENV === 'production') {
+} else if (Object({"MIX_PUSHER_APP_KEY":"6b7f0e72dc2f462b2a8b","MIX_PUSHER_APP_CLUSTER":"mt1","NODE_ENV":"development"}).APP_ENV === 'production') {
   window.axios.defaults.baseURL = 'https://bacab.cobos.xyz/';
 }
 /**
@@ -90737,7 +90919,7 @@ if (Object({"MIX_PUSHER_APP_CLUSTER":"mt1","MIX_PUSHER_APP_KEY":"","NODE_ENV":"d
 window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
 window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   broadcaster: 'pusher',
-  key: "",
+  key: "6b7f0e72dc2f462b2a8b",
   cluster: "mt1",
   encrypted: true
 });
@@ -92834,9 +93016,9 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\cobose\krow\sh\resources\js\app.js */"./resources/js/app.js");
-__webpack_require__(/*! C:\Users\cobose\krow\sh\resources\sass\app.scss */"./resources/sass/app.scss");
-module.exports = __webpack_require__(/*! C:\Users\cobose\krow\sh\resources\sass\log-in.scss */"./resources/sass/log-in.scss");
+__webpack_require__(/*! /Users/owl/Krow/Apps/sh/resources/js/app.js */"./resources/js/app.js");
+__webpack_require__(/*! /Users/owl/Krow/Apps/sh/resources/sass/app.scss */"./resources/sass/app.scss");
+module.exports = __webpack_require__(/*! /Users/owl/Krow/Apps/sh/resources/sass/log-in.scss */"./resources/sass/log-in.scss");
 
 
 /***/ })
