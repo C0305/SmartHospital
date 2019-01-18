@@ -12,28 +12,29 @@
                         fixed
                         type="index"
                         width="50"/>
-                <template v-for="(header,index) in tableConfig[1]">
+                <template v-for="(column,index) in tableConfig[1]">
                     <el-table-column
-                            v-if="header.filter !== null"
+                            v-if="column.header.filter !== null"
                             :key="index"
-                            :label="header.name"
-                            :prop="header.prop"
-                            :width="header.width"
-                            :fixed="header.fixed">
+                            :label="column.header.name"
+                            :prop="column.header.prop"
+                            :width="column.header.width"
+                            :fixed="column.header.fixed">
                         <template slot="header" slot-scope="scope">
                             <div class="bacab-table__header-container" style="display: grid">
-                                <label class="bacab-table__header-container__item">{{ header.name }}</label>
+                                <label class="bacab-table__header-container__item">{{ column.header.name }}</label>
 
                                 <el-input style="width: 100%"
-                                          v-if="header.filter.type === 'input'"
-                                          v-model="search"
+                                          v-if="column.header.filter.type === 'input'"
+                                          v-model="filters[column.header.prop]"
                                           class="bacab-table__header-container__item"
                                           size="mini"
                                           placeholder="Type to search"/>
+
                                 <el-date-picker
                                         style="width: 100%"
-                                        v-if="header.filter.type === 'date'"
-                                        v-model="value6"
+                                        v-if="column.header.filter.type === 'date'"
+                                        v-model="filters[column.header.prop]"
                                         type="daterange"
                                         size="mini"
                                         range-separator="To"
@@ -41,11 +42,13 @@
                                         end-placeholder="End date">
                                 </el-date-picker>
                                 <el-select
-                                        v-if="header.filter.type === 'select'"
+                                        style="width: 100%"
+                                        v-if="column.header.filter.type === 'select'"
                                         multiple
+                                        v-model="filters[column.header.prop]"
                                         placeholder="Select">
                                     <el-option
-                                            v-for="item in header.filter.selectOptions"
+                                            v-for="item in column.header.filter.selectOptions"
                                             :key="item.value"
                                             :label="item.label"
                                             :value="item.value">
@@ -57,16 +60,22 @@
                     <el-table-column
                             v-else
                             :key="index"
-                            :label="header.name"
-                            :prop="header.prop"
-                            :width="header.width"
-                            :fixed="header.fixed">
+                            :label="column.header.name"
+                            :prop="column.header.prop"
+                            :width="column.header.width"
+                            :fixed="column.header.fixed">
 
                         <template slot="header" slot-scope="scope">
                             <div class="bacab-table__header-container" style="display: grid">
-                                <label class="bacab-table__header-container__item">{{ header.name }}</label>
+                                <label class="bacab-table__header-container__item">{{ column.header.name }}</label>
                             </div>
                         </template>
+                        <template v-if="column.slot !== null">
+                            <template slot-scope="scope">
+                                <slot :name="column.slot"/>
+                            </template>
+                        </template>
+
                     </el-table-column>
                 </template>
 
@@ -76,10 +85,45 @@
 </template>
 
 <script>
+    import cloneDeep from 'lodash'
     export default {
         props: {
             tableConfig: Array,
             dataArray: Array,
+            remoteSearch: Function
+        },
+        data(){
+            return {
+                filters: {}
+            }
+        },
+        created(){
+            this.setFilters();
+        },
+        watch:{
+            filters: {
+                handler(newValue) {
+                    console.log(this.filters);
+                },
+                deep: true
+            }
+        },
+        methods: {
+            setFilters(){
+                this.tableConfig[1].forEach( item => {
+                   if(item.header.filters !== null){
+                       if(item.header.prop !== null || typeof item.header.prop !== undefined){
+                           this.$set(this.filters, item.header.prop, null );
+                       }
+                   }
+                })
+                console.log(this.filters);
+            },
+            sendToRemoteSearch(){
+                let filters = cloneDeep(this.filters);
+                console.log(filters);
+                this.remoteSearch(filters);
+            }
         },
         name: "bacabTables"
     }

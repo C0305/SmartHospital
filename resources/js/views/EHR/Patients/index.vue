@@ -42,24 +42,30 @@
                     },
                     [
                         {
-                            name: 'Nombre',
-                            prop: 'name',
-                            filter: {
-                                type: 'date'
+                            header: {
+                                name: 'Nombre',
+                                prop: 'name',
+                                filter: {
+                                    type: 'date'
+                                }
                             }
                         },
                         {
-                            name: 'Edad',
-                            prop: 'age',
-                            filter: {
-                                type: 'input'
+                            header: {
+                                name: 'Edad',
+                                prop: 'age',
+                                filter: {
+                                    type: 'input'
+                                }
                             }
                         },
                         {
-                            name: 'Sexo',
-                            prop: 'sex',
-                            filter: {
-                                type: 'input'
+                            header: {
+                                name: 'Sexo',
+                                prop: 'sex',
+                                filter: {
+                                    type: 'input'
+                                }
                             }
                         }
                     ]
