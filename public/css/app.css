@@ -894,58 +894,6 @@ a {
   text-align: left;
 }
 
-@media only screen and (min-width: 65.625em) {
-  .main__cards {
-    -webkit-column-count: 2;
-            column-count: 2;
-  }
-
-  .main-header__intro-wrapper {
-    flex-direction: row;
-  }
-
-  .main-header__welcome {
-    align-items: flex-start;
-  }
-}
-
-@media only screen and (min-width: 46.875em) {
-  .grid {
-    display: grid;
-    grid-template-columns: 240px calc(100% - 240px);
-    grid-template-rows: 80px 1fr 30px;
-    grid-template-areas: "sidenav header" "sidenav main" "sidenav footer";
-    height: 100vh;
-  }
-
-  .sidenav {
-    position: relative;
-    -webkit-transform: translateX(0);
-            transform: translateX(0);
-  }
-
-  .sidenav__brand-close {
-    visibility: hidden;
-  }
-
-  .main-header__intro-wrapper {
-    padding: 0 30px;
-  }
-
-  .header__menu {
-    display: none;
-  }
-
-  .header__search {
-    margin-left: 20px;
-  }
-
-  .header__avatar {
-    width: 40px;
-    height: 40px;
-  }
-}
-
 .aside {
   position: fixed;
   z-index: 1986;
