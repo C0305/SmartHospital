@@ -4335,6 +4335,8 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var qs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! qs */ "./node_modules/qs/lib/index.js");
+/* harmony import */ var qs__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(qs__WEBPACK_IMPORTED_MODULE_1__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 //
@@ -4423,30 +4425,101 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     tableConfig: Array,
-    dataArray: Array,
-    remoteSearch: Function
+    remoteUrl: String,
+    dataManipulationMethod: Function
   },
   data: function data() {
     return {
-      filters: {}
+      tableHeight: 0,
+      error: null,
+      lastSearch: 0,
+      filters: {
+        pageSize: 25
+      },
+      dataArray: [{
+        name: 'sisi'
+      }],
+      currentPage: 1,
+      pageSizes: [25, 50, 75, 100],
+      totalRecords: null,
+      from: 1,
+      loadingData: false
     };
   },
   created: function created() {
     this.setFilters();
+    this.setHeight();
   },
-  watch: {
-    filters: {
-      handler: function handler(newValue) {
-        console.log(this.filters);
-      },
-      deep: true
-    }
+  mounted: function mounted() {
+    this.queryMethod();
   },
+
+  /*errorCaptured (err, vm, info) {
+      this.error = `${err.stack}\n\nfound in ${info} of component`
+      return false
+  },*/
   methods: {
+    setHeight: function setHeight() {
+      this.tableHeight = $(window).height() - 290;
+    },
+    indexFunction: function indexFunction(index) {
+      return index * this.from;
+    },
     setFilters: function setFilters() {
       var _this = this;
 
@@ -4457,12 +4530,33 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
           }
         }
       });
-      console.log(this.filters);
     },
-    sendToRemoteSearch: function sendToRemoteSearch() {
-      var filters = lodash__WEBPACK_IMPORTED_MODULE_0___default()(this.filters);
-      console.log(filters);
-      this.remoteSearch(filters);
+    queryMethod: function queryMethod() {
+      var _this2 = this;
+
+      var now = new Date();
+
+      if (now - this.lastSearch > 900) {
+        this.lastSearch = now;
+        var filters = Object(lodash__WEBPACK_IMPORTED_MODULE_0__["cloneDeep"])(this.filters);
+        filters = qs__WEBPACK_IMPORTED_MODULE_1___default.a.stringify(filters);
+        var url = this.remoteUrl + '?page=' + this.currentPage;
+        axios.get(url + '&' + filters).then(function (response) {
+          if (_this2.dataManipulationMethod) {
+            _this2.from = response.data.from;
+            _this2.totalRecords = response.data.total;
+            _this2.dataArray = _this2.dataManipulationMethod(response.data.data);
+          } else {
+            _this2.from = response.data.from;
+            _this2.totalRecords = response.data.total;
+            _this2.dataArray = response.data.data;
+          }
+        }).catch(function (response) {
+          _this2.$message.error('Error al cargar los datos');
+
+          console.error('ERROR ' + response);
+        });
+      }
     }
   },
   name: "bacabTables"
@@ -4566,9 +4660,32 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "index",
+  components: {
+    BacabTables: _ui_components_bacabTables__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   data: function data() {
     return {
       tableConfig: [{
@@ -4577,15 +4694,8 @@ __webpack_require__.r(__webpack_exports__);
       }, [{
         header: {
           name: 'Nombre',
-          prop: 'name',
-          filter: {
-            type: 'date'
-          }
-        }
-      }, {
-        header: {
-          name: 'Edad',
-          prop: 'age',
+          prop: 'fullname',
+          width: '350px',
           filter: {
             type: 'input'
           }
@@ -4593,29 +4703,82 @@ __webpack_require__.r(__webpack_exports__);
       }, {
         header: {
           name: 'Sexo',
-          prop: 'sex',
+          prop: 'gender',
+          width: '200px',
+          filter: {
+            type: 'slot',
+            slot: 'sexheader',
+            options: [{
+              value: 0,
+              label: 'Hombre'
+            }, {
+              value: 1,
+              label: 'Mujer'
+            }, {
+              value: 2,
+              label: 'Otro'
+            }]
+          }
+        }
+      }, {
+        header: {
+          name: 'Edad',
+          prop: 'birthday',
+          width: '300px',
           filter: {
             type: 'input'
           }
         }
-      }]],
-      dataArray: [{
-        id: 1,
-        name: 'Bob Patiño',
-        age: 6
       }, {
-        id: 1,
-        name: 'Bob Patiño',
-        age: 6
+        header: {
+          name: 'Grupo sanguíneo',
+          prop: 'blood_group',
+          width: '200px',
+          filter: {
+            type: 'select',
+            options: [{
+              value: 'O-',
+              label: 'O-'
+            }, {
+              value: 'O+',
+              label: 'O+'
+            }, {
+              value: 'A−',
+              label: 'A−'
+            }, {
+              value: 'A+',
+              label: 'A+'
+            }, {
+              value: 'B-',
+              label: 'B-'
+            }, {
+              value: 'B+',
+              label: 'B+'
+            }, {
+              value: 'AB',
+              label: 'AB-'
+            }, {
+              value: 'AB+',
+              label: 'AB+'
+            }]
+          }
+        }
       }, {
-        id: 1,
-        name: 'Bob Patiño',
-        age: 6
-      }]
+        header: {
+          name: 'Acciones',
+          width: '200px'
+        },
+        body: {
+          type: 'slot',
+          slot: 'actions'
+        }
+      }]]
     };
   },
-  components: {
-    BacabTables: _ui_components_bacabTables__WEBPACK_IMPORTED_MODULE_0__["default"]
+  methods: {
+    test: function test() {
+      console.log('simon ese');
+    }
   }
 });
 
@@ -88855,6 +89018,791 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ }),
 
+/***/ "./node_modules/qs/lib/formats.js":
+/*!****************************************!*\
+  !*** ./node_modules/qs/lib/formats.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var replace = String.prototype.replace;
+var percentTwenties = /%20/g;
+
+module.exports = {
+    'default': 'RFC3986',
+    formatters: {
+        RFC1738: function (value) {
+            return replace.call(value, percentTwenties, '+');
+        },
+        RFC3986: function (value) {
+            return value;
+        }
+    },
+    RFC1738: 'RFC1738',
+    RFC3986: 'RFC3986'
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/qs/lib/index.js":
+/*!**************************************!*\
+  !*** ./node_modules/qs/lib/index.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var stringify = __webpack_require__(/*! ./stringify */ "./node_modules/qs/lib/stringify.js");
+var parse = __webpack_require__(/*! ./parse */ "./node_modules/qs/lib/parse.js");
+var formats = __webpack_require__(/*! ./formats */ "./node_modules/qs/lib/formats.js");
+
+module.exports = {
+    formats: formats,
+    parse: parse,
+    stringify: stringify
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/qs/lib/parse.js":
+/*!**************************************!*\
+  !*** ./node_modules/qs/lib/parse.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(/*! ./utils */ "./node_modules/qs/lib/utils.js");
+
+var has = Object.prototype.hasOwnProperty;
+
+var defaults = {
+    allowDots: false,
+    allowPrototypes: false,
+    arrayLimit: 20,
+    charset: 'utf-8',
+    charsetSentinel: false,
+    decoder: utils.decode,
+    delimiter: '&',
+    depth: 5,
+    ignoreQueryPrefix: false,
+    interpretNumericEntities: false,
+    parameterLimit: 1000,
+    parseArrays: true,
+    plainObjects: false,
+    strictNullHandling: false
+};
+
+var interpretNumericEntities = function (str) {
+    return str.replace(/&#(\d+);/g, function ($0, numberStr) {
+        return String.fromCharCode(parseInt(numberStr, 10));
+    });
+};
+
+// This is what browsers will submit when the ✓ character occurs in an
+// application/x-www-form-urlencoded body and the encoding of the page containing
+// the form is iso-8859-1, or when the submitted form has an accept-charset
+// attribute of iso-8859-1. Presumably also with other charsets that do not contain
+// the ✓ character, such as us-ascii.
+var isoSentinel = 'utf8=%26%2310003%3B'; // encodeURIComponent('&#10003;')
+
+// These are the percent-encoded utf-8 octets representing a checkmark, indicating that the request actually is utf-8 encoded.
+var charsetSentinel = 'utf8=%E2%9C%93'; // encodeURIComponent('✓')
+
+var parseValues = function parseQueryStringValues(str, options) {
+    var obj = {};
+    var cleanStr = options.ignoreQueryPrefix ? str.replace(/^\?/, '') : str;
+    var limit = options.parameterLimit === Infinity ? undefined : options.parameterLimit;
+    var parts = cleanStr.split(options.delimiter, limit);
+    var skipIndex = -1; // Keep track of where the utf8 sentinel was found
+    var i;
+
+    var charset = options.charset;
+    if (options.charsetSentinel) {
+        for (i = 0; i < parts.length; ++i) {
+            if (parts[i].indexOf('utf8=') === 0) {
+                if (parts[i] === charsetSentinel) {
+                    charset = 'utf-8';
+                } else if (parts[i] === isoSentinel) {
+                    charset = 'iso-8859-1';
+                }
+                skipIndex = i;
+                i = parts.length; // The eslint settings do not allow break;
+            }
+        }
+    }
+
+    for (i = 0; i < parts.length; ++i) {
+        if (i === skipIndex) {
+            continue;
+        }
+        var part = parts[i];
+
+        var bracketEqualsPos = part.indexOf(']=');
+        var pos = bracketEqualsPos === -1 ? part.indexOf('=') : bracketEqualsPos + 1;
+
+        var key, val;
+        if (pos === -1) {
+            key = options.decoder(part, defaults.decoder, charset);
+            val = options.strictNullHandling ? null : '';
+        } else {
+            key = options.decoder(part.slice(0, pos), defaults.decoder, charset);
+            val = options.decoder(part.slice(pos + 1), defaults.decoder, charset);
+        }
+
+        if (val && options.interpretNumericEntities && charset === 'iso-8859-1') {
+            val = interpretNumericEntities(val);
+        }
+        if (has.call(obj, key)) {
+            obj[key] = utils.combine(obj[key], val);
+        } else {
+            obj[key] = val;
+        }
+    }
+
+    return obj;
+};
+
+var parseObject = function (chain, val, options) {
+    var leaf = val;
+
+    for (var i = chain.length - 1; i >= 0; --i) {
+        var obj;
+        var root = chain[i];
+
+        if (root === '[]' && options.parseArrays) {
+            obj = [].concat(leaf);
+        } else {
+            obj = options.plainObjects ? Object.create(null) : {};
+            var cleanRoot = root.charAt(0) === '[' && root.charAt(root.length - 1) === ']' ? root.slice(1, -1) : root;
+            var index = parseInt(cleanRoot, 10);
+            if (!options.parseArrays && cleanRoot === '') {
+                obj = { 0: leaf };
+            } else if (
+                !isNaN(index)
+                && root !== cleanRoot
+                && String(index) === cleanRoot
+                && index >= 0
+                && (options.parseArrays && index <= options.arrayLimit)
+            ) {
+                obj = [];
+                obj[index] = leaf;
+            } else {
+                obj[cleanRoot] = leaf;
+            }
+        }
+
+        leaf = obj;
+    }
+
+    return leaf;
+};
+
+var parseKeys = function parseQueryStringKeys(givenKey, val, options) {
+    if (!givenKey) {
+        return;
+    }
+
+    // Transform dot notation to bracket notation
+    var key = options.allowDots ? givenKey.replace(/\.([^.[]+)/g, '[$1]') : givenKey;
+
+    // The regex chunks
+
+    var brackets = /(\[[^[\]]*])/;
+    var child = /(\[[^[\]]*])/g;
+
+    // Get the parent
+
+    var segment = brackets.exec(key);
+    var parent = segment ? key.slice(0, segment.index) : key;
+
+    // Stash the parent if it exists
+
+    var keys = [];
+    if (parent) {
+        // If we aren't using plain objects, optionally prefix keys that would overwrite object prototype properties
+        if (!options.plainObjects && has.call(Object.prototype, parent)) {
+            if (!options.allowPrototypes) {
+                return;
+            }
+        }
+
+        keys.push(parent);
+    }
+
+    // Loop through children appending to the array until we hit depth
+
+    var i = 0;
+    while ((segment = child.exec(key)) !== null && i < options.depth) {
+        i += 1;
+        if (!options.plainObjects && has.call(Object.prototype, segment[1].slice(1, -1))) {
+            if (!options.allowPrototypes) {
+                return;
+            }
+        }
+        keys.push(segment[1]);
+    }
+
+    // If there's a remainder, just add whatever is left
+
+    if (segment) {
+        keys.push('[' + key.slice(segment.index) + ']');
+    }
+
+    return parseObject(keys, val, options);
+};
+
+module.exports = function (str, opts) {
+    var options = opts ? utils.assign({}, opts) : {};
+
+    if (options.decoder !== null && options.decoder !== undefined && typeof options.decoder !== 'function') {
+        throw new TypeError('Decoder has to be a function.');
+    }
+
+    options.ignoreQueryPrefix = options.ignoreQueryPrefix === true;
+    options.delimiter = typeof options.delimiter === 'string' || utils.isRegExp(options.delimiter) ? options.delimiter : defaults.delimiter;
+    options.depth = typeof options.depth === 'number' ? options.depth : defaults.depth;
+    options.arrayLimit = typeof options.arrayLimit === 'number' ? options.arrayLimit : defaults.arrayLimit;
+    options.parseArrays = options.parseArrays !== false;
+    options.decoder = typeof options.decoder === 'function' ? options.decoder : defaults.decoder;
+    options.allowDots = typeof options.allowDots === 'undefined' ? defaults.allowDots : !!options.allowDots;
+    options.plainObjects = typeof options.plainObjects === 'boolean' ? options.plainObjects : defaults.plainObjects;
+    options.allowPrototypes = typeof options.allowPrototypes === 'boolean' ? options.allowPrototypes : defaults.allowPrototypes;
+    options.parameterLimit = typeof options.parameterLimit === 'number' ? options.parameterLimit : defaults.parameterLimit;
+    options.strictNullHandling = typeof options.strictNullHandling === 'boolean' ? options.strictNullHandling : defaults.strictNullHandling;
+
+    if (typeof options.charset !== 'undefined' && options.charset !== 'utf-8' && options.charset !== 'iso-8859-1') {
+        throw new Error('The charset option must be either utf-8, iso-8859-1, or undefined');
+    }
+    if (typeof options.charset === 'undefined') {
+        options.charset = defaults.charset;
+    }
+
+    if (str === '' || str === null || typeof str === 'undefined') {
+        return options.plainObjects ? Object.create(null) : {};
+    }
+
+    var tempObj = typeof str === 'string' ? parseValues(str, options) : str;
+    var obj = options.plainObjects ? Object.create(null) : {};
+
+    // Iterate over the keys and setup the new object
+
+    var keys = Object.keys(tempObj);
+    for (var i = 0; i < keys.length; ++i) {
+        var key = keys[i];
+        var newObj = parseKeys(key, tempObj[key], options);
+        obj = utils.merge(obj, newObj, options);
+    }
+
+    return utils.compact(obj);
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/qs/lib/stringify.js":
+/*!******************************************!*\
+  !*** ./node_modules/qs/lib/stringify.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var utils = __webpack_require__(/*! ./utils */ "./node_modules/qs/lib/utils.js");
+var formats = __webpack_require__(/*! ./formats */ "./node_modules/qs/lib/formats.js");
+
+var arrayPrefixGenerators = {
+    brackets: function brackets(prefix) { // eslint-disable-line func-name-matching
+        return prefix + '[]';
+    },
+    indices: function indices(prefix, key) { // eslint-disable-line func-name-matching
+        return prefix + '[' + key + ']';
+    },
+    repeat: function repeat(prefix) { // eslint-disable-line func-name-matching
+        return prefix;
+    }
+};
+
+var isArray = Array.isArray;
+var push = Array.prototype.push;
+var pushToArray = function (arr, valueOrArray) {
+    push.apply(arr, isArray(valueOrArray) ? valueOrArray : [valueOrArray]);
+};
+
+var toISO = Date.prototype.toISOString;
+
+var defaults = {
+    addQueryPrefix: false,
+    allowDots: false,
+    charset: 'utf-8',
+    charsetSentinel: false,
+    delimiter: '&',
+    encode: true,
+    encoder: utils.encode,
+    encodeValuesOnly: false,
+    // deprecated
+    indices: false,
+    serializeDate: function serializeDate(date) { // eslint-disable-line func-name-matching
+        return toISO.call(date);
+    },
+    skipNulls: false,
+    strictNullHandling: false
+};
+
+var stringify = function stringify( // eslint-disable-line func-name-matching
+    object,
+    prefix,
+    generateArrayPrefix,
+    strictNullHandling,
+    skipNulls,
+    encoder,
+    filter,
+    sort,
+    allowDots,
+    serializeDate,
+    formatter,
+    encodeValuesOnly,
+    charset
+) {
+    var obj = object;
+    if (typeof filter === 'function') {
+        obj = filter(prefix, obj);
+    } else if (obj instanceof Date) {
+        obj = serializeDate(obj);
+    }
+
+    if (obj === null) {
+        if (strictNullHandling) {
+            return encoder && !encodeValuesOnly ? encoder(prefix, defaults.encoder, charset) : prefix;
+        }
+
+        obj = '';
+    }
+
+    if (typeof obj === 'string' || typeof obj === 'number' || typeof obj === 'boolean' || utils.isBuffer(obj)) {
+        if (encoder) {
+            var keyValue = encodeValuesOnly ? prefix : encoder(prefix, defaults.encoder, charset);
+            return [formatter(keyValue) + '=' + formatter(encoder(obj, defaults.encoder, charset))];
+        }
+        return [formatter(prefix) + '=' + formatter(String(obj))];
+    }
+
+    var values = [];
+
+    if (typeof obj === 'undefined') {
+        return values;
+    }
+
+    var objKeys;
+    if (Array.isArray(filter)) {
+        objKeys = filter;
+    } else {
+        var keys = Object.keys(obj);
+        objKeys = sort ? keys.sort(sort) : keys;
+    }
+
+    for (var i = 0; i < objKeys.length; ++i) {
+        var key = objKeys[i];
+
+        if (skipNulls && obj[key] === null) {
+            continue;
+        }
+
+        if (Array.isArray(obj)) {
+            pushToArray(values, stringify(
+                obj[key],
+                generateArrayPrefix(prefix, key),
+                generateArrayPrefix,
+                strictNullHandling,
+                skipNulls,
+                encoder,
+                filter,
+                sort,
+                allowDots,
+                serializeDate,
+                formatter,
+                encodeValuesOnly,
+                charset
+            ));
+        } else {
+            pushToArray(values, stringify(
+                obj[key],
+                prefix + (allowDots ? '.' + key : '[' + key + ']'),
+                generateArrayPrefix,
+                strictNullHandling,
+                skipNulls,
+                encoder,
+                filter,
+                sort,
+                allowDots,
+                serializeDate,
+                formatter,
+                encodeValuesOnly,
+                charset
+            ));
+        }
+    }
+
+    return values;
+};
+
+module.exports = function (object, opts) {
+    var obj = object;
+    var options = opts ? utils.assign({}, opts) : {};
+
+    if (options.encoder !== null && options.encoder !== undefined && typeof options.encoder !== 'function') {
+        throw new TypeError('Encoder has to be a function.');
+    }
+
+    var delimiter = typeof options.delimiter === 'undefined' ? defaults.delimiter : options.delimiter;
+    var strictNullHandling = typeof options.strictNullHandling === 'boolean' ? options.strictNullHandling : defaults.strictNullHandling;
+    var skipNulls = typeof options.skipNulls === 'boolean' ? options.skipNulls : defaults.skipNulls;
+    var encode = typeof options.encode === 'boolean' ? options.encode : defaults.encode;
+    var encoder = typeof options.encoder === 'function' ? options.encoder : defaults.encoder;
+    var sort = typeof options.sort === 'function' ? options.sort : null;
+    var allowDots = typeof options.allowDots === 'undefined' ? defaults.allowDots : !!options.allowDots;
+    var serializeDate = typeof options.serializeDate === 'function' ? options.serializeDate : defaults.serializeDate;
+    var encodeValuesOnly = typeof options.encodeValuesOnly === 'boolean' ? options.encodeValuesOnly : defaults.encodeValuesOnly;
+    var charset = options.charset || defaults.charset;
+    if (typeof options.charset !== 'undefined' && options.charset !== 'utf-8' && options.charset !== 'iso-8859-1') {
+        throw new Error('The charset option must be either utf-8, iso-8859-1, or undefined');
+    }
+
+    if (typeof options.format === 'undefined') {
+        options.format = formats['default'];
+    } else if (!Object.prototype.hasOwnProperty.call(formats.formatters, options.format)) {
+        throw new TypeError('Unknown format option provided.');
+    }
+    var formatter = formats.formatters[options.format];
+    var objKeys;
+    var filter;
+
+    if (typeof options.filter === 'function') {
+        filter = options.filter;
+        obj = filter('', obj);
+    } else if (Array.isArray(options.filter)) {
+        filter = options.filter;
+        objKeys = filter;
+    }
+
+    var keys = [];
+
+    if (typeof obj !== 'object' || obj === null) {
+        return '';
+    }
+
+    var arrayFormat;
+    if (options.arrayFormat in arrayPrefixGenerators) {
+        arrayFormat = options.arrayFormat;
+    } else if ('indices' in options) {
+        arrayFormat = options.indices ? 'indices' : 'repeat';
+    } else {
+        arrayFormat = 'indices';
+    }
+
+    var generateArrayPrefix = arrayPrefixGenerators[arrayFormat];
+
+    if (!objKeys) {
+        objKeys = Object.keys(obj);
+    }
+
+    if (sort) {
+        objKeys.sort(sort);
+    }
+
+    for (var i = 0; i < objKeys.length; ++i) {
+        var key = objKeys[i];
+
+        if (skipNulls && obj[key] === null) {
+            continue;
+        }
+        pushToArray(keys, stringify(
+            obj[key],
+            key,
+            generateArrayPrefix,
+            strictNullHandling,
+            skipNulls,
+            encode ? encoder : null,
+            filter,
+            sort,
+            allowDots,
+            serializeDate,
+            formatter,
+            encodeValuesOnly,
+            charset
+        ));
+    }
+
+    var joined = keys.join(delimiter);
+    var prefix = options.addQueryPrefix === true ? '?' : '';
+
+    if (options.charsetSentinel) {
+        if (charset === 'iso-8859-1') {
+            // encodeURIComponent('&#10003;'), the "numeric entity" representation of a checkmark
+            prefix += 'utf8=%26%2310003%3B&';
+        } else {
+            // encodeURIComponent('✓')
+            prefix += 'utf8=%E2%9C%93&';
+        }
+    }
+
+    return joined.length > 0 ? prefix + joined : '';
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/qs/lib/utils.js":
+/*!**************************************!*\
+  !*** ./node_modules/qs/lib/utils.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var has = Object.prototype.hasOwnProperty;
+
+var hexTable = (function () {
+    var array = [];
+    for (var i = 0; i < 256; ++i) {
+        array.push('%' + ((i < 16 ? '0' : '') + i.toString(16)).toUpperCase());
+    }
+
+    return array;
+}());
+
+var compactQueue = function compactQueue(queue) {
+    while (queue.length > 1) {
+        var item = queue.pop();
+        var obj = item.obj[item.prop];
+
+        if (Array.isArray(obj)) {
+            var compacted = [];
+
+            for (var j = 0; j < obj.length; ++j) {
+                if (typeof obj[j] !== 'undefined') {
+                    compacted.push(obj[j]);
+                }
+            }
+
+            item.obj[item.prop] = compacted;
+        }
+    }
+};
+
+var arrayToObject = function arrayToObject(source, options) {
+    var obj = options && options.plainObjects ? Object.create(null) : {};
+    for (var i = 0; i < source.length; ++i) {
+        if (typeof source[i] !== 'undefined') {
+            obj[i] = source[i];
+        }
+    }
+
+    return obj;
+};
+
+var merge = function merge(target, source, options) {
+    if (!source) {
+        return target;
+    }
+
+    if (typeof source !== 'object') {
+        if (Array.isArray(target)) {
+            target.push(source);
+        } else if (typeof target === 'object') {
+            if ((options && (options.plainObjects || options.allowPrototypes)) || !has.call(Object.prototype, source)) {
+                target[source] = true;
+            }
+        } else {
+            return [target, source];
+        }
+
+        return target;
+    }
+
+    if (typeof target !== 'object') {
+        return [target].concat(source);
+    }
+
+    var mergeTarget = target;
+    if (Array.isArray(target) && !Array.isArray(source)) {
+        mergeTarget = arrayToObject(target, options);
+    }
+
+    if (Array.isArray(target) && Array.isArray(source)) {
+        source.forEach(function (item, i) {
+            if (has.call(target, i)) {
+                if (target[i] && typeof target[i] === 'object') {
+                    target[i] = merge(target[i], item, options);
+                } else {
+                    target.push(item);
+                }
+            } else {
+                target[i] = item;
+            }
+        });
+        return target;
+    }
+
+    return Object.keys(source).reduce(function (acc, key) {
+        var value = source[key];
+
+        if (has.call(acc, key)) {
+            acc[key] = merge(acc[key], value, options);
+        } else {
+            acc[key] = value;
+        }
+        return acc;
+    }, mergeTarget);
+};
+
+var assign = function assignSingleSource(target, source) {
+    return Object.keys(source).reduce(function (acc, key) {
+        acc[key] = source[key];
+        return acc;
+    }, target);
+};
+
+var decode = function (str, decoder, charset) {
+    var strWithoutPlus = str.replace(/\+/g, ' ');
+    if (charset === 'iso-8859-1') {
+        // unescape never throws, no try...catch needed:
+        return strWithoutPlus.replace(/%[0-9a-f]{2}/gi, unescape);
+    }
+    // utf-8
+    try {
+        return decodeURIComponent(strWithoutPlus);
+    } catch (e) {
+        return strWithoutPlus;
+    }
+};
+
+var encode = function encode(str, defaultEncoder, charset) {
+    // This code was originally written by Brian White (mscdex) for the io.js core querystring library.
+    // It has been adapted here for stricter adherence to RFC 3986
+    if (str.length === 0) {
+        return str;
+    }
+
+    var string = typeof str === 'string' ? str : String(str);
+
+    if (charset === 'iso-8859-1') {
+        return escape(string).replace(/%u[0-9a-f]{4}/gi, function ($0) {
+            return '%26%23' + parseInt($0.slice(2), 16) + '%3B';
+        });
+    }
+
+    var out = '';
+    for (var i = 0; i < string.length; ++i) {
+        var c = string.charCodeAt(i);
+
+        if (
+            c === 0x2D // -
+            || c === 0x2E // .
+            || c === 0x5F // _
+            || c === 0x7E // ~
+            || (c >= 0x30 && c <= 0x39) // 0-9
+            || (c >= 0x41 && c <= 0x5A) // a-z
+            || (c >= 0x61 && c <= 0x7A) // A-Z
+        ) {
+            out += string.charAt(i);
+            continue;
+        }
+
+        if (c < 0x80) {
+            out = out + hexTable[c];
+            continue;
+        }
+
+        if (c < 0x800) {
+            out = out + (hexTable[0xC0 | (c >> 6)] + hexTable[0x80 | (c & 0x3F)]);
+            continue;
+        }
+
+        if (c < 0xD800 || c >= 0xE000) {
+            out = out + (hexTable[0xE0 | (c >> 12)] + hexTable[0x80 | ((c >> 6) & 0x3F)] + hexTable[0x80 | (c & 0x3F)]);
+            continue;
+        }
+
+        i += 1;
+        c = 0x10000 + (((c & 0x3FF) << 10) | (string.charCodeAt(i) & 0x3FF));
+        out += hexTable[0xF0 | (c >> 18)]
+            + hexTable[0x80 | ((c >> 12) & 0x3F)]
+            + hexTable[0x80 | ((c >> 6) & 0x3F)]
+            + hexTable[0x80 | (c & 0x3F)];
+    }
+
+    return out;
+};
+
+var compact = function compact(value) {
+    var queue = [{ obj: { o: value }, prop: 'o' }];
+    var refs = [];
+
+    for (var i = 0; i < queue.length; ++i) {
+        var item = queue[i];
+        var obj = item.obj[item.prop];
+
+        var keys = Object.keys(obj);
+        for (var j = 0; j < keys.length; ++j) {
+            var key = keys[j];
+            var val = obj[key];
+            if (typeof val === 'object' && val !== null && refs.indexOf(val) === -1) {
+                queue.push({ obj: obj, prop: key });
+                refs.push(val);
+            }
+        }
+    }
+
+    compactQueue(queue);
+
+    return value;
+};
+
+var isRegExp = function isRegExp(obj) {
+    return Object.prototype.toString.call(obj) === '[object RegExp]';
+};
+
+var isBuffer = function isBuffer(obj) {
+    if (obj === null || typeof obj === 'undefined') {
+        return false;
+    }
+
+    return !!(obj.constructor && obj.constructor.isBuffer && obj.constructor.isBuffer(obj));
+};
+
+var combine = function combine(a, b) {
+    return [].concat(a, b);
+};
+
+module.exports = {
+    arrayToObject: arrayToObject,
+    assign: assign,
+    combine: combine,
+    compact: compact,
+    decode: decode,
+    encode: encode,
+    isBuffer: isBuffer,
+    isRegExp: isRegExp,
+    merge: merge
+};
+
+
+/***/ }),
+
 /***/ "./node_modules/resize-observer-polyfill/dist/ResizeObserver.es.js":
 /*!*************************************************************************!*\
   !*** ./node_modules/resize-observer-polyfill/dist/ResizeObserver.es.js ***!
@@ -91692,10 +92640,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/ui/components/bacabTables.vue?vue&type=template&id=5aff9bbe&scoped=true&":
-/*!*****************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/ui/components/bacabTables.vue?vue&type=template&id=5aff9bbe&scoped=true& ***!
-  \*****************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/ui/components/bacabTables.vue?vue&type=template&id=5aff9bbe&":
+/*!*****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/ui/components/bacabTables.vue?vue&type=template&id=5aff9bbe& ***!
+  \*****************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -91707,8 +92655,33 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "box" }, [
-    _c("div", { staticClass: "box__header" }),
+  return _c("div", { staticClass: "box box--no-shadow " }, [
+    _c("div", { staticClass: "box__header" }, [
+      _c(
+        "div",
+        { staticClass: "header-buttons__secondary-buttons" },
+        [
+          _c("el-pagination", {
+            attrs: {
+              "current-page.sync": "currentPage",
+              "page-sizes": _vm.pageSizes,
+              "page-size": _vm.filters.pageSize,
+              layout: "total, sizes, prev, pager, next, jumper",
+              total: _vm.totalRecords
+            },
+            on: {
+              "size-change": function($event) {
+                _vm.queryMethod()
+              },
+              "current-change": function($event) {
+                _vm.queryMethod()
+              }
+            }
+          })
+        ],
+        1
+      )
+    ]),
     _vm._v(" "),
     _c(
       "div",
@@ -91717,21 +92690,206 @@ var render = function() {
         _c(
           "el-table",
           {
+            directives: [
+              {
+                name: "loading",
+                rawName: "v-loading",
+                value: _vm.loadingData,
+                expression: "loadingData"
+              }
+            ],
             attrs: {
               data: _vm.dataArray,
               "highlight-current-row": "",
+              "max-height": _vm.tableHeight,
               border: ""
             }
           },
           [
             _c("el-table-column", {
-              attrs: { fixed: "", type: "index", width: "50" }
+              attrs: { type: "index", index: _vm.indexFunction, width: "50" }
             }),
             _vm._v(" "),
             _vm._l(_vm.tableConfig[1], function(column, index) {
               return [
-                column.header.filter !== null
+                column.header.filter != null
                   ? _c("el-table-column", {
+                      key: index,
+                      attrs: {
+                        label: column.header.name,
+                        prop: column.header.prop,
+                        width: column.header.width
+                          ? column.header.width
+                          : _vm.auto,
+                        fixed: column.header.fixed
+                      },
+                      scopedSlots: _vm._u([
+                        {
+                          key: "header",
+                          fn: function(props) {
+                            return [
+                              _c(
+                                "div",
+                                {
+                                  staticClass: "bacab-table__header-container",
+                                  staticStyle: { display: "grid" }
+                                },
+                                [
+                                  _c(
+                                    "label",
+                                    {
+                                      staticClass:
+                                        "bacab-table__header-container__item"
+                                    },
+                                    [_vm._v(_vm._s(column.header.name))]
+                                  ),
+                                  _vm._v(" "),
+                                  column.header.filter.type === "input"
+                                    ? _c("el-input", {
+                                        staticClass:
+                                          "bacab-table__header-container__item",
+                                        staticStyle: { width: "100%" },
+                                        attrs: {
+                                          size: "mini",
+                                          placeholder: "Enter para buscar"
+                                        },
+                                        nativeOn: {
+                                          keyup: function($event) {
+                                            if (
+                                              !("button" in $event) &&
+                                              _vm._k(
+                                                $event.keyCode,
+                                                "enter",
+                                                13,
+                                                $event.key,
+                                                "Enter"
+                                              )
+                                            ) {
+                                              return null
+                                            }
+                                            _vm.queryMethod()
+                                          }
+                                        },
+                                        model: {
+                                          value:
+                                            _vm.filters[column.header.prop],
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.filters,
+                                              column.header.prop,
+                                              $$v
+                                            )
+                                          },
+                                          expression:
+                                            "filters[column.header.prop]"
+                                        }
+                                      })
+                                    : _vm._e(),
+                                  _vm._v(" "),
+                                  column.header.filter.type === "date"
+                                    ? _c("el-date-picker", {
+                                        staticClass:
+                                          "bacab-table__header-container__item",
+                                        staticStyle: { width: "100%" },
+                                        attrs: {
+                                          type: "daterange",
+                                          change: _vm.queryMethod(),
+                                          size: "mini",
+                                          "range-separator": "To",
+                                          "start-placeholder": "Start date",
+                                          "end-placeholder": "End date"
+                                        },
+                                        model: {
+                                          value:
+                                            _vm.filters[column.header.prop],
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.filters,
+                                              column.header.prop,
+                                              $$v
+                                            )
+                                          },
+                                          expression:
+                                            "filters[column.header.prop]"
+                                        }
+                                      })
+                                    : _vm._e(),
+                                  _vm._v(" "),
+                                  column.header.filter.type === "select"
+                                    ? [
+                                        _c(
+                                          "el-select",
+                                          {
+                                            staticClass:
+                                              "bacab-table__header-container__item",
+                                            staticStyle: { width: "100%" },
+                                            attrs: {
+                                              multiple: "",
+                                              change: _vm.queryMethod(),
+                                              size: "mini",
+                                              placeholder: "Select"
+                                            },
+                                            model: {
+                                              value:
+                                                _vm.filters[column.header.prop],
+                                              callback: function($$v) {
+                                                _vm.$set(
+                                                  _vm.filters,
+                                                  column.header.prop,
+                                                  $$v
+                                                )
+                                              },
+                                              expression:
+                                                "filters[column.header.prop]"
+                                            }
+                                          },
+                                          _vm._l(
+                                            column.header.filter.options,
+                                            function(item, index) {
+                                              return column.header.filter
+                                                .options != null
+                                                ? _c("el-option", {
+                                                    key: index,
+                                                    attrs: {
+                                                      label: item.label,
+                                                      value: item.value
+                                                    }
+                                                  })
+                                                : _vm._e()
+                                            }
+                                          ),
+                                          1
+                                        )
+                                      ]
+                                    : _vm._e(),
+                                  _vm._v(" "),
+                                  column.header.filter.type === "slot"
+                                    ? _vm._t(
+                                        column.header.filter.slot,
+                                        null,
+                                        null,
+                                        props
+                                      )
+                                    : _vm._e()
+                                ],
+                                2
+                              )
+                            ]
+                          }
+                        },
+                        {
+                          key: "default",
+                          fn: function(props) {
+                            return column.body != null &&
+                              column.body.slot != null &&
+                              column.body.type === "slot"
+                              ? [_vm._t(column.body.slot, null, null, props)]
+                              : undefined
+                          }
+                        }
+                      ])
+                    })
+                  : _c("el-table-column", {
                       key: index,
                       attrs: {
                         label: column.header.name,
@@ -91758,146 +92916,24 @@ var render = function() {
                                         "bacab-table__header-container__item"
                                     },
                                     [_vm._v(_vm._s(column.header.name))]
-                                  ),
-                                  _vm._v(" "),
-                                  column.header.filter.type === "input"
-                                    ? _c("el-input", {
-                                        staticClass:
-                                          "bacab-table__header-container__item",
-                                        staticStyle: { width: "100%" },
-                                        attrs: {
-                                          size: "mini",
-                                          placeholder: "Type to search"
-                                        },
-                                        model: {
-                                          value:
-                                            _vm.filters[column.header.prop],
-                                          callback: function($$v) {
-                                            _vm.$set(
-                                              _vm.filters,
-                                              column.header.prop,
-                                              $$v
-                                            )
-                                          },
-                                          expression:
-                                            "filters[column.header.prop]"
-                                        }
-                                      })
-                                    : _vm._e(),
-                                  _vm._v(" "),
-                                  column.header.filter.type === "date"
-                                    ? _c("el-date-picker", {
-                                        staticStyle: { width: "100%" },
-                                        attrs: {
-                                          type: "daterange",
-                                          size: "mini",
-                                          "range-separator": "To",
-                                          "start-placeholder": "Start date",
-                                          "end-placeholder": "End date"
-                                        },
-                                        model: {
-                                          value:
-                                            _vm.filters[column.header.prop],
-                                          callback: function($$v) {
-                                            _vm.$set(
-                                              _vm.filters,
-                                              column.header.prop,
-                                              $$v
-                                            )
-                                          },
-                                          expression:
-                                            "filters[column.header.prop]"
-                                        }
-                                      })
-                                    : _vm._e(),
-                                  _vm._v(" "),
-                                  column.header.filter.type === "select"
-                                    ? _c(
-                                        "el-select",
-                                        {
-                                          staticStyle: { width: "100%" },
-                                          attrs: {
-                                            multiple: "",
-                                            placeholder: "Select"
-                                          },
-                                          model: {
-                                            value:
-                                              _vm.filters[column.header.prop],
-                                            callback: function($$v) {
-                                              _vm.$set(
-                                                _vm.filters,
-                                                column.header.prop,
-                                                $$v
-                                              )
-                                            },
-                                            expression:
-                                              "filters[column.header.prop]"
-                                          }
-                                        },
-                                        _vm._l(
-                                          column.header.filter.selectOptions,
-                                          function(item) {
-                                            return _c("el-option", {
-                                              key: item.value,
-                                              attrs: {
-                                                label: item.label,
-                                                value: item.value
-                                              }
-                                            })
-                                          }
-                                        ),
-                                        1
-                                      )
-                                    : _vm._e()
-                                ],
-                                1
+                                  )
+                                ]
                               )
                             ]
+                          }
+                        },
+                        {
+                          key: "default",
+                          fn: function(props) {
+                            return column.body != null &&
+                              column.body.slot != null &&
+                              column.body.type === "slot"
+                              ? [_vm._t(column.body.slot, null, null, props)]
+                              : undefined
                           }
                         }
                       ])
                     })
-                  : _c(
-                      "el-table-column",
-                      {
-                        key: index,
-                        attrs: {
-                          label: column.header.name,
-                          prop: column.header.prop,
-                          width: column.header.width,
-                          fixed: column.header.fixed
-                        },
-                        scopedSlots: _vm._u([
-                          {
-                            key: "header",
-                            fn: function(scope) {
-                              return [
-                                _c(
-                                  "div",
-                                  {
-                                    staticClass:
-                                      "bacab-table__header-container",
-                                    staticStyle: { display: "grid" }
-                                  },
-                                  [
-                                    _c(
-                                      "label",
-                                      {
-                                        staticClass:
-                                          "bacab-table__header-container__item"
-                                      },
-                                      [_vm._v(_vm._s(column.header.name))]
-                                    )
-                                  ]
-                                )
-                              ]
-                            }
-                          }
-                        ])
-                      },
-                      [column.slot !== null ? void 0 : _vm._e()],
-                      2
-                    )
               ]
             })
           ],
@@ -92024,14 +93060,59 @@ var render = function() {
               "bacab-tables",
               {
                 attrs: {
-                  "data-array": _vm.dataArray,
+                  "remote-url": "/ehr/patients/index/",
                   "table-config": _vm.tableConfig
                 }
               },
               [
-                _c("template", { slot: "acciones" }, [
+                _c("template", { slot: "sexheader" }, [
                   _vm._v(
                     "\n                        asdasdasd\n                    "
+                  )
+                ]),
+                _vm._v(" "),
+                _c("template", { slot: "actions" }, [
+                  _c(
+                    "div",
+                    { staticStyle: { rigth: "0" } },
+                    [
+                      _c(
+                        "el-button",
+                        {
+                          attrs: {
+                            size: "small",
+                            round: "",
+                            type: "info",
+                            icon: "fas fa-edit"
+                          },
+                          on: {
+                            click: function($event) {
+                              _vm.test()
+                            }
+                          }
+                        },
+                        [_c("b", [_vm._v("Editar")])]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "el-button",
+                        {
+                          attrs: {
+                            size: "small",
+                            round: "",
+                            type: "danger",
+                            icon: "fas fa-trash-alt"
+                          },
+                          on: {
+                            click: function($event) {
+                              _vm.test()
+                            }
+                          }
+                        },
+                        [_c("b", [_vm._v("Borrar")])]
+                      )
+                    ],
+                    1
                   )
                 ])
               ],
@@ -108135,9 +109216,9 @@ if (token) {
   console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
-if (Object({"MIX_PUSHER_APP_CLUSTER":"mt1","MIX_PUSHER_APP_KEY":"","NODE_ENV":"development"}).APP_ENV === 'local') {
+if (Object({"MIX_PUSHER_APP_KEY":"6b7f0e72dc2f462b2a8b","MIX_PUSHER_APP_CLUSTER":"mt1","NODE_ENV":"development"}).APP_ENV === 'local') {
   window.axios.defaults.baseURL = '';
-} else if (Object({"MIX_PUSHER_APP_CLUSTER":"mt1","MIX_PUSHER_APP_KEY":"","NODE_ENV":"development"}).APP_ENV === 'production') {
+} else if (Object({"MIX_PUSHER_APP_KEY":"6b7f0e72dc2f462b2a8b","MIX_PUSHER_APP_CLUSTER":"mt1","NODE_ENV":"development"}).APP_ENV === 'production') {
   window.axios.defaults.baseURL = 'https://bacab.cobos.xyz/';
 }
 /**
@@ -108151,7 +109232,7 @@ if (Object({"MIX_PUSHER_APP_CLUSTER":"mt1","MIX_PUSHER_APP_KEY":"","NODE_ENV":"d
 window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
 window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   broadcaster: 'pusher',
-  key: "",
+  key: "6b7f0e72dc2f462b2a8b",
   cluster: "mt1",
   encrypted: true
 });
@@ -109292,7 +110373,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _bacabTables_vue_vue_type_template_id_5aff9bbe_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./bacabTables.vue?vue&type=template&id=5aff9bbe&scoped=true& */ "./resources/js/ui/components/bacabTables.vue?vue&type=template&id=5aff9bbe&scoped=true&");
+/* harmony import */ var _bacabTables_vue_vue_type_template_id_5aff9bbe___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./bacabTables.vue?vue&type=template&id=5aff9bbe& */ "./resources/js/ui/components/bacabTables.vue?vue&type=template&id=5aff9bbe&");
 /* harmony import */ var _bacabTables_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./bacabTables.vue?vue&type=script&lang=js& */ "./resources/js/ui/components/bacabTables.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
@@ -109304,11 +110385,11 @@ __webpack_require__.r(__webpack_exports__);
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
   _bacabTables_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _bacabTables_vue_vue_type_template_id_5aff9bbe_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _bacabTables_vue_vue_type_template_id_5aff9bbe_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _bacabTables_vue_vue_type_template_id_5aff9bbe___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _bacabTables_vue_vue_type_template_id_5aff9bbe___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
-  "5aff9bbe",
+  null,
   null
   
 )
@@ -109334,19 +110415,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/ui/components/bacabTables.vue?vue&type=template&id=5aff9bbe&scoped=true&":
-/*!***********************************************************************************************!*\
-  !*** ./resources/js/ui/components/bacabTables.vue?vue&type=template&id=5aff9bbe&scoped=true& ***!
-  \***********************************************************************************************/
+/***/ "./resources/js/ui/components/bacabTables.vue?vue&type=template&id=5aff9bbe&":
+/*!***********************************************************************************!*\
+  !*** ./resources/js/ui/components/bacabTables.vue?vue&type=template&id=5aff9bbe& ***!
+  \***********************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_bacabTables_vue_vue_type_template_id_5aff9bbe_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./bacabTables.vue?vue&type=template&id=5aff9bbe&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/ui/components/bacabTables.vue?vue&type=template&id=5aff9bbe&scoped=true&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_bacabTables_vue_vue_type_template_id_5aff9bbe_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_bacabTables_vue_vue_type_template_id_5aff9bbe___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./bacabTables.vue?vue&type=template&id=5aff9bbe& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/ui/components/bacabTables.vue?vue&type=template&id=5aff9bbe&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_bacabTables_vue_vue_type_template_id_5aff9bbe___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_bacabTables_vue_vue_type_template_id_5aff9bbe_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_bacabTables_vue_vue_type_template_id_5aff9bbe___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -110248,9 +111329,9 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\cobose\krow\sh\resources\js\app.js */"./resources/js/app.js");
-__webpack_require__(/*! C:\Users\cobose\krow\sh\resources\sass\app.scss */"./resources/sass/app.scss");
-module.exports = __webpack_require__(/*! C:\Users\cobose\krow\sh\resources\sass\log-in.scss */"./resources/sass/log-in.scss");
+__webpack_require__(/*! /Users/owl/Krow/Apps/sh/resources/js/app.js */"./resources/js/app.js");
+__webpack_require__(/*! /Users/owl/Krow/Apps/sh/resources/sass/app.scss */"./resources/sass/app.scss");
+module.exports = __webpack_require__(/*! /Users/owl/Krow/Apps/sh/resources/sass/log-in.scss */"./resources/sass/log-in.scss");
 
 
 /***/ })
