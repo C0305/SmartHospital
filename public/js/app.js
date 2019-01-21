@@ -3899,6 +3899,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _ui_global_mixins_aside__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../ui/global/mixins/aside */ "./resources/js/ui/global/mixins/aside.js");
 //
 //
 //
@@ -3927,8 +3928,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "bacabAside",
+  mixins: [_ui_global_mixins_aside__WEBPACK_IMPORTED_MODULE_0__["default"]],
   props: {
     saveButton: Boolean,
     saveButtonFunction: Function,
@@ -3950,16 +3953,22 @@ __webpack_require__.r(__webpack_exports__);
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(function () {
-        _this.closeFunction();
+        if (_this.closeFunction != null()) {
+          _this.closeFunction();
+        }
 
-        _this.$store.dispatch('general/bacabAsideOpenClose', false);
+        _this.closeAside();
       });
     },
     saveAndClose: function saveAndClose() {
       try {
         this.saveButtonFunction();
-        this.closeFunction();
-        this.$store.dispatch('general/bacabAsideOpenClose', false);
+
+        if (this.closeFunction != null()) {
+          this.closeFunction();
+        }
+
+        this.closeAside();
       } catch (Exception) {
         console.log('Error');
         console.log(Exception);
@@ -4475,25 +4484,30 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
+    title: String,
     tableConfig: Array,
     remoteUrl: String,
     dataManipulationMethod: Function
   },
   data: function data() {
     return {
+      config: [],
       tableHeight: 0,
       error: null,
       lastSearch: 0,
       filters: {
         pageSize: 25
       },
-      dataArray: [{
-        name: 'sisi'
-      }],
+      dataArray: [],
       currentPage: 1,
       pageSizes: [25, 50, 75, 100],
       totalRecords: null,
@@ -4502,8 +4516,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     };
   },
   created: function created() {
-    this.setFilters();
-    this.setHeight();
+    this.init();
   },
   mounted: function mounted() {
     this.queryMethod();
@@ -4514,6 +4527,44 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       return false
   },*/
   methods: {
+    init: function init() {
+      this.setFilters();
+      this.responsiveConfig();
+      this.setHeight();
+    },
+    responsiveConfig: function responsiveConfig() {
+      var _this = this;
+
+      var arrayList = this.createList();
+      this.config = Object(lodash__WEBPACK_IMPORTED_MODULE_0__["cloneDeep"])(this.tableConfig);
+
+      if (arrayList.tableWidth < arrayList.windowWidth - 20) {
+        arrayList.includeList.forEach(function (item) {
+          _this.config[1][item].header.width = 'auto';
+        });
+      }
+    },
+    createList: function createList() {
+      var arrayList = {
+        excludeList: [],
+        includeList: [],
+        tableWidth: 0,
+        windowWidth: 0
+      };
+      this.tableConfig[1].forEach(function (item, index) {
+        if (item.header.width != null) {
+          if (item.header.fixedWidth === true || item.header.width >= '350px') {
+            arrayList.excludeList.push(index);
+          } else {
+            arrayList.includeList.push(index);
+          }
+
+          arrayList.tableWidth += Number(item.header.width.split('px')[0]);
+        }
+      });
+      arrayList.windowWidth = $(window).width();
+      return arrayList;
+    },
     setHeight: function setHeight() {
       this.tableHeight = $(window).height() - 290;
     },
@@ -4521,18 +4572,18 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
       return index * this.from;
     },
     setFilters: function setFilters() {
-      var _this = this;
+      var _this2 = this;
 
       this.tableConfig[1].forEach(function (item) {
         if (item.header.filters !== null) {
           if (item.header.prop !== null || _typeof(item.header.prop) !== undefined) {
-            _this.$set(_this.filters, item.header.prop, null);
+            _this2.$set(_this2.filters, item.header.prop, null);
           }
         }
       });
     },
     queryMethod: function queryMethod() {
-      var _this2 = this;
+      var _this3 = this;
 
       var now = new Date();
 
@@ -4542,17 +4593,17 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         filters = qs__WEBPACK_IMPORTED_MODULE_1___default.a.stringify(filters);
         var url = this.remoteUrl + '?page=' + this.currentPage;
         axios.get(url + '&' + filters).then(function (response) {
-          if (_this2.dataManipulationMethod) {
-            _this2.from = response.data.from;
-            _this2.totalRecords = response.data.total;
-            _this2.dataArray = _this2.dataManipulationMethod(response.data.data);
+          if (_this3.dataManipulationMethod) {
+            _this3.from = response.data.from;
+            _this3.totalRecords = response.data.total;
+            _this3.dataArray = _this3.dataManipulationMethod(response.data.data);
           } else {
-            _this2.from = response.data.from;
-            _this2.totalRecords = response.data.total;
-            _this2.dataArray = response.data.data;
+            _this3.from = response.data.from;
+            _this3.totalRecords = response.data.total;
+            _this3.dataArray = response.data.data;
           }
         }).catch(function (response) {
-          _this2.$message.error('Error al cargar los datos');
+          _this3.$message.error('Error al cargar los datos');
 
           console.error('ERROR ' + response);
         });
@@ -4629,6 +4680,27 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ui_components_bacabTables__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../ui/components/bacabTables */ "./resources/js/ui/components/bacabTables.vue");
+/* harmony import */ var _ui_components_bacabAside__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../ui/components/bacabAside */ "./resources/js/ui/components/bacabAside.vue");
+/* harmony import */ var _ui_global_mixins_aside__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../ui/global/mixins/aside */ "./resources/js/ui/global/mixins/aside.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -4681,13 +4753,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "index",
+  mixins: [_ui_global_mixins_aside__WEBPACK_IMPORTED_MODULE_2__["default"]],
   components: {
+    BacabAside: _ui_components_bacabAside__WEBPACK_IMPORTED_MODULE_1__["default"],
     BacabTables: _ui_components_bacabTables__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   data: function data() {
     return {
+      form: {
+        name: ''
+      },
+      bacabAsideText: 'Nuevo Paciente',
+      modalOpen: false,
       tableConfig: [{
         acciones: true,
         accionesSlot: "acciones"
@@ -4706,8 +4787,7 @@ __webpack_require__.r(__webpack_exports__);
           prop: 'gender',
           width: '200px',
           filter: {
-            type: 'slot',
-            slot: 'sexheader',
+            type: 'select',
             options: [{
               value: 0,
               label: 'Hombre'
@@ -4776,6 +4856,9 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
+    openModal: function openModal() {
+      this.modalOpen ? this.modalOpen = false : this.modalOpen = true;
+    },
     test: function test() {
       console.log('simon ese');
     }
@@ -5043,6 +5126,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ui_components_bacabAside__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../ui/components/bacabAside */ "./resources/js/ui/components/bacabAside.vue");
+/* harmony import */ var _ui_global_mixins_aside__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../ui/global/mixins/aside */ "./resources/js/ui/global/mixins/aside.js");
 //
 //
 //
@@ -5278,8 +5362,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "index",
+  mixins: [_ui_global_mixins_aside__WEBPACK_IMPORTED_MODULE_1__["default"]],
   components: {
     BacabAside: _ui_components_bacabAside__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
@@ -89089,62 +89175,21 @@ var defaults = {
     allowDots: false,
     allowPrototypes: false,
     arrayLimit: 20,
-    charset: 'utf-8',
-    charsetSentinel: false,
     decoder: utils.decode,
     delimiter: '&',
     depth: 5,
-    ignoreQueryPrefix: false,
-    interpretNumericEntities: false,
     parameterLimit: 1000,
-    parseArrays: true,
     plainObjects: false,
     strictNullHandling: false
 };
-
-var interpretNumericEntities = function (str) {
-    return str.replace(/&#(\d+);/g, function ($0, numberStr) {
-        return String.fromCharCode(parseInt(numberStr, 10));
-    });
-};
-
-// This is what browsers will submit when the ✓ character occurs in an
-// application/x-www-form-urlencoded body and the encoding of the page containing
-// the form is iso-8859-1, or when the submitted form has an accept-charset
-// attribute of iso-8859-1. Presumably also with other charsets that do not contain
-// the ✓ character, such as us-ascii.
-var isoSentinel = 'utf8=%26%2310003%3B'; // encodeURIComponent('&#10003;')
-
-// These are the percent-encoded utf-8 octets representing a checkmark, indicating that the request actually is utf-8 encoded.
-var charsetSentinel = 'utf8=%E2%9C%93'; // encodeURIComponent('✓')
 
 var parseValues = function parseQueryStringValues(str, options) {
     var obj = {};
     var cleanStr = options.ignoreQueryPrefix ? str.replace(/^\?/, '') : str;
     var limit = options.parameterLimit === Infinity ? undefined : options.parameterLimit;
     var parts = cleanStr.split(options.delimiter, limit);
-    var skipIndex = -1; // Keep track of where the utf8 sentinel was found
-    var i;
 
-    var charset = options.charset;
-    if (options.charsetSentinel) {
-        for (i = 0; i < parts.length; ++i) {
-            if (parts[i].indexOf('utf8=') === 0) {
-                if (parts[i] === charsetSentinel) {
-                    charset = 'utf-8';
-                } else if (parts[i] === isoSentinel) {
-                    charset = 'iso-8859-1';
-                }
-                skipIndex = i;
-                i = parts.length; // The eslint settings do not allow break;
-            }
-        }
-    }
-
-    for (i = 0; i < parts.length; ++i) {
-        if (i === skipIndex) {
-            continue;
-        }
+    for (var i = 0; i < parts.length; ++i) {
         var part = parts[i];
 
         var bracketEqualsPos = part.indexOf(']=');
@@ -89152,18 +89197,14 @@ var parseValues = function parseQueryStringValues(str, options) {
 
         var key, val;
         if (pos === -1) {
-            key = options.decoder(part, defaults.decoder, charset);
+            key = options.decoder(part, defaults.decoder);
             val = options.strictNullHandling ? null : '';
         } else {
-            key = options.decoder(part.slice(0, pos), defaults.decoder, charset);
-            val = options.decoder(part.slice(pos + 1), defaults.decoder, charset);
-        }
-
-        if (val && options.interpretNumericEntities && charset === 'iso-8859-1') {
-            val = interpretNumericEntities(val);
+            key = options.decoder(part.slice(0, pos), defaults.decoder);
+            val = options.decoder(part.slice(pos + 1), defaults.decoder);
         }
         if (has.call(obj, key)) {
-            obj[key] = utils.combine(obj[key], val);
+            obj[key] = [].concat(obj[key]).concat(val);
         } else {
             obj[key] = val;
         }
@@ -89179,15 +89220,14 @@ var parseObject = function (chain, val, options) {
         var obj;
         var root = chain[i];
 
-        if (root === '[]' && options.parseArrays) {
-            obj = [].concat(leaf);
+        if (root === '[]') {
+            obj = [];
+            obj = obj.concat(leaf);
         } else {
             obj = options.plainObjects ? Object.create(null) : {};
             var cleanRoot = root.charAt(0) === '[' && root.charAt(root.length - 1) === ']' ? root.slice(1, -1) : root;
             var index = parseInt(cleanRoot, 10);
-            if (!options.parseArrays && cleanRoot === '') {
-                obj = { 0: leaf };
-            } else if (
+            if (
                 !isNaN(index)
                 && root !== cleanRoot
                 && String(index) === cleanRoot
@@ -89229,7 +89269,8 @@ var parseKeys = function parseQueryStringKeys(givenKey, val, options) {
 
     var keys = [];
     if (parent) {
-        // If we aren't using plain objects, optionally prefix keys that would overwrite object prototype properties
+        // If we aren't using plain objects, optionally prefix keys
+        // that would overwrite object prototype properties
         if (!options.plainObjects && has.call(Object.prototype, parent)) {
             if (!options.allowPrototypes) {
                 return;
@@ -89274,18 +89315,11 @@ module.exports = function (str, opts) {
     options.arrayLimit = typeof options.arrayLimit === 'number' ? options.arrayLimit : defaults.arrayLimit;
     options.parseArrays = options.parseArrays !== false;
     options.decoder = typeof options.decoder === 'function' ? options.decoder : defaults.decoder;
-    options.allowDots = typeof options.allowDots === 'undefined' ? defaults.allowDots : !!options.allowDots;
+    options.allowDots = typeof options.allowDots === 'boolean' ? options.allowDots : defaults.allowDots;
     options.plainObjects = typeof options.plainObjects === 'boolean' ? options.plainObjects : defaults.plainObjects;
     options.allowPrototypes = typeof options.allowPrototypes === 'boolean' ? options.allowPrototypes : defaults.allowPrototypes;
     options.parameterLimit = typeof options.parameterLimit === 'number' ? options.parameterLimit : defaults.parameterLimit;
     options.strictNullHandling = typeof options.strictNullHandling === 'boolean' ? options.strictNullHandling : defaults.strictNullHandling;
-
-    if (typeof options.charset !== 'undefined' && options.charset !== 'utf-8' && options.charset !== 'iso-8859-1') {
-        throw new Error('The charset option must be either utf-8, iso-8859-1, or undefined');
-    }
-    if (typeof options.charset === 'undefined') {
-        options.charset = defaults.charset;
-    }
 
     if (str === '' || str === null || typeof str === 'undefined') {
         return options.plainObjects ? Object.create(null) : {};
@@ -89334,25 +89368,13 @@ var arrayPrefixGenerators = {
     }
 };
 
-var isArray = Array.isArray;
-var push = Array.prototype.push;
-var pushToArray = function (arr, valueOrArray) {
-    push.apply(arr, isArray(valueOrArray) ? valueOrArray : [valueOrArray]);
-};
-
 var toISO = Date.prototype.toISOString;
 
 var defaults = {
-    addQueryPrefix: false,
-    allowDots: false,
-    charset: 'utf-8',
-    charsetSentinel: false,
     delimiter: '&',
     encode: true,
     encoder: utils.encode,
     encodeValuesOnly: false,
-    // deprecated
-    indices: false,
     serializeDate: function serializeDate(date) { // eslint-disable-line func-name-matching
         return toISO.call(date);
     },
@@ -89372,19 +89394,16 @@ var stringify = function stringify( // eslint-disable-line func-name-matching
     allowDots,
     serializeDate,
     formatter,
-    encodeValuesOnly,
-    charset
+    encodeValuesOnly
 ) {
     var obj = object;
     if (typeof filter === 'function') {
         obj = filter(prefix, obj);
     } else if (obj instanceof Date) {
         obj = serializeDate(obj);
-    }
-
-    if (obj === null) {
+    } else if (obj === null) {
         if (strictNullHandling) {
-            return encoder && !encodeValuesOnly ? encoder(prefix, defaults.encoder, charset) : prefix;
+            return encoder && !encodeValuesOnly ? encoder(prefix, defaults.encoder) : prefix;
         }
 
         obj = '';
@@ -89392,8 +89411,8 @@ var stringify = function stringify( // eslint-disable-line func-name-matching
 
     if (typeof obj === 'string' || typeof obj === 'number' || typeof obj === 'boolean' || utils.isBuffer(obj)) {
         if (encoder) {
-            var keyValue = encodeValuesOnly ? prefix : encoder(prefix, defaults.encoder, charset);
-            return [formatter(keyValue) + '=' + formatter(encoder(obj, defaults.encoder, charset))];
+            var keyValue = encodeValuesOnly ? prefix : encoder(prefix, defaults.encoder);
+            return [formatter(keyValue) + '=' + formatter(encoder(obj, defaults.encoder))];
         }
         return [formatter(prefix) + '=' + formatter(String(obj))];
     }
@@ -89420,7 +89439,7 @@ var stringify = function stringify( // eslint-disable-line func-name-matching
         }
 
         if (Array.isArray(obj)) {
-            pushToArray(values, stringify(
+            values = values.concat(stringify(
                 obj[key],
                 generateArrayPrefix(prefix, key),
                 generateArrayPrefix,
@@ -89432,11 +89451,10 @@ var stringify = function stringify( // eslint-disable-line func-name-matching
                 allowDots,
                 serializeDate,
                 formatter,
-                encodeValuesOnly,
-                charset
+                encodeValuesOnly
             ));
         } else {
-            pushToArray(values, stringify(
+            values = values.concat(stringify(
                 obj[key],
                 prefix + (allowDots ? '.' + key : '[' + key + ']'),
                 generateArrayPrefix,
@@ -89448,8 +89466,7 @@ var stringify = function stringify( // eslint-disable-line func-name-matching
                 allowDots,
                 serializeDate,
                 formatter,
-                encodeValuesOnly,
-                charset
+                encodeValuesOnly
             ));
         }
     }
@@ -89471,14 +89488,9 @@ module.exports = function (object, opts) {
     var encode = typeof options.encode === 'boolean' ? options.encode : defaults.encode;
     var encoder = typeof options.encoder === 'function' ? options.encoder : defaults.encoder;
     var sort = typeof options.sort === 'function' ? options.sort : null;
-    var allowDots = typeof options.allowDots === 'undefined' ? defaults.allowDots : !!options.allowDots;
+    var allowDots = typeof options.allowDots === 'undefined' ? false : options.allowDots;
     var serializeDate = typeof options.serializeDate === 'function' ? options.serializeDate : defaults.serializeDate;
     var encodeValuesOnly = typeof options.encodeValuesOnly === 'boolean' ? options.encodeValuesOnly : defaults.encodeValuesOnly;
-    var charset = options.charset || defaults.charset;
-    if (typeof options.charset !== 'undefined' && options.charset !== 'utf-8' && options.charset !== 'iso-8859-1') {
-        throw new Error('The charset option must be either utf-8, iso-8859-1, or undefined');
-    }
-
     if (typeof options.format === 'undefined') {
         options.format = formats['default'];
     } else if (!Object.prototype.hasOwnProperty.call(formats.formatters, options.format)) {
@@ -89527,7 +89539,8 @@ module.exports = function (object, opts) {
         if (skipNulls && obj[key] === null) {
             continue;
         }
-        pushToArray(keys, stringify(
+
+        keys = keys.concat(stringify(
             obj[key],
             key,
             generateArrayPrefix,
@@ -89539,23 +89552,12 @@ module.exports = function (object, opts) {
             allowDots,
             serializeDate,
             formatter,
-            encodeValuesOnly,
-            charset
+            encodeValuesOnly
         ));
     }
 
     var joined = keys.join(delimiter);
     var prefix = options.addQueryPrefix === true ? '?' : '';
-
-    if (options.charsetSentinel) {
-        if (charset === 'iso-8859-1') {
-            // encodeURIComponent('&#10003;'), the "numeric entity" representation of a checkmark
-            prefix += 'utf8=%26%2310003%3B&';
-        } else {
-            // encodeURIComponent('✓')
-            prefix += 'utf8=%E2%9C%93&';
-        }
-    }
 
     return joined.length > 0 ? prefix + joined : '';
 };
@@ -89585,9 +89587,11 @@ var hexTable = (function () {
 }());
 
 var compactQueue = function compactQueue(queue) {
-    while (queue.length > 1) {
+    var obj;
+
+    while (queue.length) {
         var item = queue.pop();
-        var obj = item.obj[item.prop];
+        obj = item.obj[item.prop];
 
         if (Array.isArray(obj)) {
             var compacted = [];
@@ -89601,6 +89605,8 @@ var compactQueue = function compactQueue(queue) {
             item.obj[item.prop] = compacted;
         }
     }
+
+    return obj;
 };
 
 var arrayToObject = function arrayToObject(source, options) {
@@ -89623,7 +89629,7 @@ var merge = function merge(target, source, options) {
         if (Array.isArray(target)) {
             target.push(source);
         } else if (typeof target === 'object') {
-            if ((options && (options.plainObjects || options.allowPrototypes)) || !has.call(Object.prototype, source)) {
+            if (options.plainObjects || options.allowPrototypes || !has.call(Object.prototype, source)) {
                 target[source] = true;
             }
         } else {
@@ -89676,21 +89682,15 @@ var assign = function assignSingleSource(target, source) {
     }, target);
 };
 
-var decode = function (str, decoder, charset) {
-    var strWithoutPlus = str.replace(/\+/g, ' ');
-    if (charset === 'iso-8859-1') {
-        // unescape never throws, no try...catch needed:
-        return strWithoutPlus.replace(/%[0-9a-f]{2}/gi, unescape);
-    }
-    // utf-8
+var decode = function (str) {
     try {
-        return decodeURIComponent(strWithoutPlus);
+        return decodeURIComponent(str.replace(/\+/g, ' '));
     } catch (e) {
-        return strWithoutPlus;
+        return str;
     }
 };
 
-var encode = function encode(str, defaultEncoder, charset) {
+var encode = function encode(str) {
     // This code was originally written by Brian White (mscdex) for the io.js core querystring library.
     // It has been adapted here for stricter adherence to RFC 3986
     if (str.length === 0) {
@@ -89698,12 +89698,6 @@ var encode = function encode(str, defaultEncoder, charset) {
     }
 
     var string = typeof str === 'string' ? str : String(str);
-
-    if (charset === 'iso-8859-1') {
-        return escape(string).replace(/%u[0-9a-f]{4}/gi, function ($0) {
-            return '%26%23' + parseInt($0.slice(2), 16) + '%3B';
-        });
-    }
 
     var out = '';
     for (var i = 0; i < string.length; ++i) {
@@ -89767,9 +89761,7 @@ var compact = function compact(value) {
         }
     }
 
-    compactQueue(queue);
-
-    return value;
+    return compactQueue(queue);
 };
 
 var isRegExp = function isRegExp(obj) {
@@ -89784,14 +89776,9 @@ var isBuffer = function isBuffer(obj) {
     return !!(obj.constructor && obj.constructor.isBuffer && obj.constructor.isBuffer(obj));
 };
 
-var combine = function combine(a, b) {
-    return [].concat(a, b);
-};
-
 module.exports = {
     arrayToObject: arrayToObject,
     assign: assign,
-    combine: combine,
     compact: compact,
     decode: decode,
     encode: encode,
@@ -92164,7 +92151,7 @@ var render = function() {
         _c("span", {
           staticClass: "fas fa-times-circle",
           attrs: { type: "button" },
-          on: { click: _vm.close }
+          on: { click: _vm.closeAside }
         }),
         _vm._v(" "),
         _c("p", [_vm._v(_vm._s(_vm.name))])
@@ -92657,6 +92644,8 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "box box--no-shadow " }, [
     _c("div", { staticClass: "box__header" }, [
+      _c("h3", { staticClass: "box__title" }, [_vm._v(_vm._s(_vm.title))]),
+      _vm._v(" "),
       _c(
         "div",
         { staticClass: "header-buttons__secondary-buttons" },
@@ -92710,7 +92699,7 @@ var render = function() {
               attrs: { type: "index", index: _vm.indexFunction, width: "50" }
             }),
             _vm._v(" "),
-            _vm._l(_vm.tableConfig[1], function(column, index) {
+            _vm._l(_vm.config[1], function(column, index) {
               return [
                 column.header.filter != null
                   ? _c("el-table-column", {
@@ -92751,6 +92740,7 @@ var render = function() {
                                         staticStyle: { width: "100%" },
                                         attrs: {
                                           size: "mini",
+                                          clearable: "",
                                           placeholder: "Enter para buscar"
                                         },
                                         nativeOn: {
@@ -92793,6 +92783,7 @@ var render = function() {
                                         staticStyle: { width: "100%" },
                                         attrs: {
                                           type: "daterange",
+                                          clearable: "",
                                           change: _vm.queryMethod(),
                                           size: "mini",
                                           "range-separator": "To",
@@ -92824,7 +92815,7 @@ var render = function() {
                                               "bacab-table__header-container__item",
                                             staticStyle: { width: "100%" },
                                             attrs: {
-                                              multiple: "",
+                                              clearable: "",
                                               change: _vm.queryMethod(),
                                               size: "mini",
                                               placeholder: "Select"
@@ -93026,115 +93017,153 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("section", [
-    _c("div", { staticClass: "header-buttons" }, [
-      _c(
-        "div",
-        { staticClass: "header-buttons__main-buttons" },
-        [
-          _c(
-            "el-button",
-            {
-              attrs: {
-                size: "small",
-                round: "",
-                icon: "glyphicon glyphicon-floppy-open"
-              }
-            },
-            [_c("b", [_vm._v("Ingresar Paciente")])]
-          )
-        ],
-        1
-      )
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "main-panel" }, [
-      _c("div", { staticClass: "box box-default" }, [
-        _vm._m(0),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "box-body" },
-          [
-            _c(
-              "bacab-tables",
-              {
-                attrs: {
-                  "remote-url": "/ehr/patients/index/",
-                  "table-config": _vm.tableConfig
-                }
-              },
-              [
-                _c("template", { slot: "sexheader" }, [
-                  _vm._v(
-                    "\n                        asdasdasd\n                    "
+  return _c(
+    "section",
+    [
+      _vm.asideOpenClose === true
+        ? _c(
+            "bacab-aside",
+            { attrs: { name: _vm.bacabAsideText } },
+            [
+              _c(
+                "template",
+                { slot: "buttons" },
+                [
+                  _c(
+                    "el-button",
+                    { attrs: { size: "mini", icon: "fas fa-save", round: "" } },
+                    [_vm._v("\n                Save\n            ")]
                   )
-                ]),
-                _vm._v(" "),
-                _c("template", { slot: "actions" }, [
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("template", { slot: "content" }, [
+                _c("div", { staticClass: "box" }, [
+                  _c("div", { staticClass: "box__header" }, [
+                    _c("h3", { staticClass: "box__title" }, [
+                      _vm._v(_vm._s(_vm.bacabAsideText))
+                    ])
+                  ]),
+                  _vm._v(" "),
                   _c(
                     "div",
-                    { staticStyle: { rigth: "0" } },
+                    { staticClass: "box__body" },
                     [
                       _c(
-                        "el-button",
-                        {
-                          attrs: {
-                            size: "small",
-                            round: "",
-                            type: "info",
-                            icon: "fas fa-edit"
-                          },
-                          on: {
-                            click: function($event) {
-                              _vm.test()
-                            }
-                          }
-                        },
-                        [_c("b", [_vm._v("Editar")])]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "el-button",
-                        {
-                          attrs: {
-                            size: "small",
-                            round: "",
-                            type: "danger",
-                            icon: "fas fa-trash-alt"
-                          },
-                          on: {
-                            click: function($event) {
-                              _vm.test()
-                            }
-                          }
-                        },
-                        [_c("b", [_vm._v("Borrar")])]
+                        "el-form",
+                        { ref: "patientForm", attrs: { model: _vm.form } },
+                        [
+                          _c(
+                            "el-form-item",
+                            { attrs: { label: "Activity name" } },
+                            [_c("el-input")],
+                            1
+                          )
+                        ],
+                        1
                       )
                     ],
                     1
                   )
                 ])
-              ],
-              2
+              ])
+            ],
+            2
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _c("div", { staticClass: "header-buttons" }, [
+        _c(
+          "div",
+          { staticClass: "header-buttons__main-buttons" },
+          [
+            _c(
+              "el-button",
+              {
+                attrs: {
+                  size: "small",
+                  round: "",
+                  icon: "glyphicon glyphicon-floppy-open"
+                },
+                on: { click: _vm.openAside }
+              },
+              [_c("b", [_vm._v("Ingresar Paciente")])]
             )
           ],
           1
         )
-      ])
-    ])
-  ])
+      ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "main-panel" },
+        [
+          _c(
+            "bacab-tables",
+            {
+              attrs: {
+                title: "Listado de Pacientes",
+                "remote-url": "/ehr/patients/index/",
+                "table-config": _vm.tableConfig
+              }
+            },
+            [
+              _c("template", { slot: "actions" }, [
+                _c(
+                  "div",
+                  { staticStyle: { rigth: "0" } },
+                  [
+                    _c(
+                      "el-button",
+                      {
+                        attrs: {
+                          size: "small",
+                          round: "",
+                          type: "info",
+                          icon: "fas fa-edit"
+                        },
+                        on: {
+                          click: function($event) {
+                            _vm.test()
+                          }
+                        }
+                      },
+                      [_c("b", [_vm._v("Editar")])]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "el-button",
+                      {
+                        attrs: {
+                          size: "small",
+                          round: "",
+                          type: "danger",
+                          icon: "fas fa-trash-alt"
+                        },
+                        on: {
+                          click: function($event) {
+                            _vm.test()
+                          }
+                        }
+                      },
+                      [_c("b", [_vm._v("Borrar")])]
+                    )
+                  ],
+                  1
+                )
+              ])
+            ],
+            2
+          )
+        ],
+        1
+      )
+    ],
+    1
+  )
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "box-header" }, [
-      _c("h3", { staticClass: "box__title" }, [_vm._v("Listado de pacientes")])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -93636,7 +93665,7 @@ var render = function() {
   return _c(
     "div",
     [
-      _vm.newElementAside === true
+      _vm.asideOpenClose === true
         ? _c(
             "bacab-aside",
             {
@@ -109216,9 +109245,9 @@ if (token) {
   console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
-if (Object({"MIX_PUSHER_APP_KEY":"6b7f0e72dc2f462b2a8b","MIX_PUSHER_APP_CLUSTER":"mt1","NODE_ENV":"development"}).APP_ENV === 'local') {
+if (Object({"MIX_PUSHER_APP_CLUSTER":"mt1","MIX_PUSHER_APP_KEY":"","NODE_ENV":"development"}).APP_ENV === 'local') {
   window.axios.defaults.baseURL = '';
-} else if (Object({"MIX_PUSHER_APP_KEY":"6b7f0e72dc2f462b2a8b","MIX_PUSHER_APP_CLUSTER":"mt1","NODE_ENV":"development"}).APP_ENV === 'production') {
+} else if (Object({"MIX_PUSHER_APP_CLUSTER":"mt1","MIX_PUSHER_APP_KEY":"","NODE_ENV":"development"}).APP_ENV === 'production') {
   window.axios.defaults.baseURL = 'https://bacab.cobos.xyz/';
 }
 /**
@@ -109232,7 +109261,7 @@ if (Object({"MIX_PUSHER_APP_KEY":"6b7f0e72dc2f462b2a8b","MIX_PUSHER_APP_CLUSTER"
 window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
 window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   broadcaster: 'pusher',
-  key: "6b7f0e72dc2f462b2a8b",
+  key: "",
   cluster: "mt1",
   encrypted: true
 });
@@ -110576,6 +110605,33 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/ui/global/mixins/aside.js":
+/*!************************************************!*\
+  !*** ./resources/js/ui/global/mixins/aside.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  methods: {
+    closeAside: function closeAside() {
+      this.$store.dispatch('general/bacabAsideOpenClose', false);
+    },
+    openAside: function openAside() {
+      this.$store.dispatch('general/bacabAsideOpenClose', true);
+    }
+  },
+  computed: {
+    asideOpenClose: function asideOpenClose() {
+      return this.$store.state.general.bacabUIEvents.bacabAsideOpen;
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./resources/js/ui/global/modules/general/actions.js":
 /*!***********************************************************!*\
   !*** ./resources/js/ui/global/modules/general/actions.js ***!
@@ -111329,9 +111385,9 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/owl/Krow/Apps/sh/resources/js/app.js */"./resources/js/app.js");
-__webpack_require__(/*! /Users/owl/Krow/Apps/sh/resources/sass/app.scss */"./resources/sass/app.scss");
-module.exports = __webpack_require__(/*! /Users/owl/Krow/Apps/sh/resources/sass/log-in.scss */"./resources/sass/log-in.scss");
+__webpack_require__(/*! C:\Users\cobose\krow\sh\resources\js\app.js */"./resources/js/app.js");
+__webpack_require__(/*! C:\Users\cobose\krow\sh\resources\sass\app.scss */"./resources/sass/app.scss");
+module.exports = __webpack_require__(/*! C:\Users\cobose\krow\sh\resources\sass\log-in.scss */"./resources/sass/log-in.scss");
 
 
 /***/ })
