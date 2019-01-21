@@ -16,3 +16,10 @@ Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/show', 'HomeController@show');
+Route::group(['prefix'=>'ehr','as'=>'ehr.'], function(){
+
+    Route::resources([
+        'patients' => 'EHR\Patient\PatientController',
+    ]);
+
+});
