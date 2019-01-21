@@ -1,7 +1,8 @@
 <template>
     <div class="box box--no-shadow ">
         <div class="box__header">
-            <!--paginator-->
+            <!--Paginator-->
+            <h3 class="box__title">{{ title }}</h3>
             <div class="header-buttons__secondary-buttons">
                 <el-pagination
                         @size-change="queryMethod()"
@@ -29,7 +30,7 @@
                         :index="indexFunction"
                         width="50"/>
 
-                <template v-for="(column,index) in tableConfig[1]">
+                <template v-for="(column,index) in config[1]">
 
                     <!--Columnas Con Filtro-->
 
@@ -55,6 +56,7 @@
                                           @keyup.enter.native="queryMethod()"
                                           class="bacab-table__header-container__item"
                                           size="mini"
+                                          clearable
                                           placeholder="Enter para buscar"/>
 
                                 <!--Date Range-->
@@ -65,6 +67,7 @@
                                         v-if="column.header.filter.type === 'date'"
                                         v-model.lazy="filters[column.header.prop]"
                                         type="daterange"
+                                        clearable
                                         :change="queryMethod()"
                                         size="mini"
                                         range-separator="To"
@@ -74,10 +77,12 @@
                                 <!--Select Multiple-->
 
                                 <template v-if="column.header.filter.type === 'select'">
+
+
                                     <el-select
                                             style="width: 100%"
+                                            clearable
                                             class="bacab-table__header-container__item"
-                                            multiple
                                             :change="queryMethod()"
                                             size="mini"
                                             v-model="filters[column.header.prop]"
@@ -139,23 +144,21 @@
     import qs from 'qs';
     export default {
         props: {
+            title: String,
             tableConfig: Array,
             remoteUrl: String,
             dataManipulationMethod: Function
         },
         data(){
             return {
+                config: [],
                 tableHeight: 0,
                 error: null,
                 lastSearch: 0,
                 filters: {
                     pageSize: 25,
                 },
-                dataArray: [
-                    {
-                        name: 'sisi'
-                    }
-                ],
+                dataArray: [],
                 currentPage: 1,
                 pageSizes: [25, 50, 75, 100],
                 totalRecords: null,
@@ -164,8 +167,7 @@
             }
         },
         created(){
-            this.setFilters();
-            this.setHeight();
+            this.init();
         },
         mounted(){
             this.queryMethod();
@@ -175,6 +177,38 @@
             return false
         },*/
         methods: {
+            init(){
+                this.setFilters();
+                this.responsiveConfig();
+                this.setHeight();
+            },
+            responsiveConfig(){
+                let arrayList = this.createList();
+                this.config = cloneDeep(this.tableConfig);
+                if(arrayList.tableWidth<(arrayList.windowWidth - 20)){
+                    arrayList.includeList.forEach(item => {
+                        this.config[1][item].header.width = 'auto'
+                    })
+                }
+            },
+            createList(){
+                let arrayList = {excludeList:[], includeList: [], tableWidth: 0, windowWidth: 0};
+                this.tableConfig[1].forEach( (item, index) => {
+                    if(item.header.width != null){
+                        if(item.header.fixedWidth === true || item.header.width >= '350px'){
+                          arrayList.excludeList.push(index);
+                        } else {
+                          arrayList.includeList.push(index);
+                        }
+
+                        arrayList.tableWidth += Number((item.header.width.split('px'))[0])
+                    }
+                });
+
+                arrayList.windowWidth =  $(window).width()
+
+                return arrayList;
+            },
             setHeight(){
                 this.tableHeight =  ($(window).height())-290;
             },

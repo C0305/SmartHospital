@@ -1,6 +1,6 @@
 <template>
     <div>
-        <bacab-aside :close-function="closeProject" :name="bacabAsideText" v-if="newElementAside === true">
+        <bacab-aside :close-function="closeProject" :name="bacabAsideText" v-if="asideOpenClose === true">
             <template slot="content">
                 <div class="box">
                     <div class="box__header">
@@ -234,8 +234,10 @@
 
 <script>
     import BacabAside from "../../ui/components/bacabAside";
+    import aside from "../../ui/global/mixins/aside";
     export default {
         name: "index",
+        mixins: [ aside ],
         components: {BacabAside},
         data() {
             return {

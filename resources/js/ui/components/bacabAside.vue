@@ -2,7 +2,7 @@
     <transition name="fade">
         <div class="lateral-aside">
             <div class="lateral-aside__top-bar">
-                <span type="button" class="fas fa-times-circle" @click="close"></span>
+                <span type="button" class="fas fa-times-circle" @click="closeAside"></span>
                 <p>{{ name }}</p>
             </div>
             <div class="lateral-aside_content">
@@ -27,8 +27,10 @@
 </template>
 
 <script>
+    import aside from "../../ui/global/mixins/aside";
     export default {
         name: "bacabAside",
+        mixins: [ aside ],
         props: {
             saveButton: Boolean,
             saveButtonFunction: Function,
@@ -48,16 +50,20 @@
                     cancelButtonText: 'Cancel',
                     type: 'warning'
                 }).then(() => {
-                    this.closeFunction();
-                    this.$store.dispatch('general/bacabAsideOpenClose',false)
+                    if(this.closeFunction != null()){
+                        this.closeFunction();
+                    }
+                    this.closeAside()
                 });
 
             },
             saveAndClose(){
                 try{
                     this.saveButtonFunction();
-                    this.closeFunction();
-                    this.$store.dispatch('general/bacabAsideOpenClose',false)
+                    if(this.closeFunction != null()){
+                        this.closeFunction();
+                    }
+                    this.closeAside()
                 } catch (Exception) {
                     console.log('Error')
                     console.log(Exception)
