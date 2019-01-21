@@ -24,7 +24,7 @@ class PatientRepository
     public function getPatientsIndexTable(){
         $model = Patient::select('*');
         $notArray = array('pageSize', 'page');
-        foreach ($this->request->all()['__wrapped__'] as $key => $value) {
+        foreach ($this->request->all() as $key => $value) {
             if(!in_array($key,$notArray) && !empty($value)){
                 if($key === 'name'){
                     $model->search($value);

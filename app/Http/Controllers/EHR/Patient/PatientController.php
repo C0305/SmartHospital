@@ -59,7 +59,6 @@ class PatientController extends Controller
         $return = null;
         switch($typeOrId){
             case 'index':
-                //dd($this->request->all());
                 $model = $this->repository->getPatientsIndexTable();
                 $return = $model->paginate($this->request->get('pageSize', 25));
                 break;
