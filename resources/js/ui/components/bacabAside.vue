@@ -5,9 +5,9 @@
                 <span type="button" class="fas fa-times-circle" @click="closeAside"></span>
                 <p>{{ name }}</p>
             </div>
-            <div class="lateral-aside_content">
-                <div class="lateral-aside_content-panel">
-                    <div class="lateral-aside_content-panel-body">
+            <div class="lateral-aside__aside-content ">
+                <div class="lateral-aside__content-panel">
+                    <div class="lateral-aside__content-panel-body">
                         <slot name="content"></slot>
                     </div>
                 </div>

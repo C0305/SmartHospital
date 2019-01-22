@@ -30,7 +30,7 @@
                         :index="indexFunction"
                         width="50"/>
 
-                <template v-for="(column,index) in config[1]">
+                <template v-for="(column,index) in config">
 
                     <!--Columnas Con Filtro-->
 
@@ -187,13 +187,13 @@
                 this.config = cloneDeep(this.tableConfig);
                 if(arrayList.tableWidth<(arrayList.windowWidth - 20)){
                     arrayList.includeList.forEach(item => {
-                        this.config[1][item].header.width = 'auto'
+                        this.config[item].header.width = 'auto'
                     })
                 }
             },
             createList(){
                 let arrayList = {excludeList:[], includeList: [], tableWidth: 0, windowWidth: 0};
-                this.tableConfig[1].forEach( (item, index) => {
+                this.tableConfig.forEach( (item, index) => {
                     if(item.header.width != null){
                         if(item.header.fixedWidth === true || item.header.width >= '350px'){
                           arrayList.excludeList.push(index);
@@ -216,7 +216,7 @@
                 return index * this.from;
             },
             setFilters(){
-                this.tableConfig[1].forEach( item => {
+                this.tableConfig.forEach( item => {
                    if(item.header.filters !== null){
                        if(item.header.prop !== null || typeof item.header.prop !== undefined){
                            this.$set(this.filters, item.header.prop, null );

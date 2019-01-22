@@ -323,7 +323,6 @@
   }
 
   &__title {
-    padding-top: 10px;
     padding-left: 10px;
     color: #163b69;
     text-transform: uppercase;
@@ -348,5 +347,8 @@
 
   &__body::after {
     clear: both;
+  }
+  &--box-aside-hight {
+    height: calc(100% - 87px);
   }
 }
