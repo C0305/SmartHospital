@@ -319,7 +319,6 @@
 }
 
 .box__title {
-  padding-top: 10px;
   padding-left: 10px;
   color: #163b69;
   text-transform: uppercase;
@@ -345,6 +344,10 @@
 
 .box__body::after {
   clear: both;
+}
+
+.box--box-aside-hight {
+  height: calc(100% - 87px);
 }
 
 html,
@@ -961,11 +964,24 @@ a {
   z-index: 10;
 }
 
+@media only screen and (max-width: 600px) {
+  .lateral-aside {
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width: 845px) {
+  .lateral-aside {
+    width: 100%;
+  }
+}
+
 .lateral-aside__top-bar {
   height: 27px;
   background-color: #394263;
   color: #F9FAFC;
   width: 100%;
+  z-index: 5;
   position: fixed;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
 }
@@ -993,19 +1009,19 @@ a {
   color: #F9FAFC;
   width: 100%;
   position: fixed;
+  bottom: 36px;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
 }
 
 .lateral-aside__aside-content {
   width: 100%;
-  height: calc(100% - 87px);
+  height: calc(100% - 50px);
   overflow-y: auto;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: unset;
   flex-direction: column;
   margin-bottom: 10px;
-  margin-top: 37px;
 }
 
 .lateral-aside__content-panel {
@@ -1017,6 +1033,7 @@ a {
   color: #333333;
   margin-left: 0;
   margin-right: 0;
+  margin-top: 36px;
 }
 
 .bacab-table__header-container {

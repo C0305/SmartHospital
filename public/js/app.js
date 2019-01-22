@@ -4540,7 +4540,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 
       if (arrayList.tableWidth < arrayList.windowWidth - 20) {
         arrayList.includeList.forEach(function (item) {
-          _this.config[1][item].header.width = 'auto';
+          _this.config[item].header.width = 'auto';
         });
       }
     },
@@ -4551,7 +4551,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
         tableWidth: 0,
         windowWidth: 0
       };
-      this.tableConfig[1].forEach(function (item, index) {
+      this.tableConfig.forEach(function (item, index) {
         if (item.header.width != null) {
           if (item.header.fixedWidth === true || item.header.width >= '350px') {
             arrayList.excludeList.push(index);
@@ -4574,7 +4574,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     setFilters: function setFilters() {
       var _this2 = this;
 
-      this.tableConfig[1].forEach(function (item) {
+      this.tableConfig.forEach(function (item) {
         if (item.header.filters !== null) {
           if (item.header.prop !== null || _typeof(item.header.prop) !== undefined) {
             _this2.$set(_this2.filters, item.header.prop, null);
@@ -4752,6 +4752,113 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -4765,14 +4872,62 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       form: {
-        name: ''
+        name: '',
+        last_name: '',
+        mother_last_name: '',
+        gender: '',
+        birthday: '',
+        blood_group: '',
+        marital_status: '',
+        allergies: ''
       },
+      rules: {
+        name: [{
+          required: true,
+          message: 'El nombre es requerido',
+          trigger: 'blur'
+        }],
+        last_name: [{
+          required: true,
+          message: 'El nombre es requerido',
+          trigger: 'blur'
+        }],
+        mother_last_name: [{
+          required: true,
+          message: 'El apellido es requerido',
+          trigger: 'blur'
+        }],
+        gender: [{
+          required: true,
+          message: 'Es requerido saber el sexo del paciente',
+          trigger: 'change'
+        }],
+        blood_group: [{
+          required: true,
+          message: 'Se requiere el tipo de sangre para continuar',
+          trigger: 'change'
+        }] //                birthday: [
+        //                    { type: 'date', required: true, message: 'Por favor ingrese la fecha de nacimiento del paciente', trigger: 'change' }
+        //                ]
+
+      },
+      labelPosition: 'top',
+      maritalStatus: [{
+        value: 'Soltero',
+        label: 'Soltero'
+      }, {
+        value: 'Casado',
+        label: 'Casado'
+      }, {
+        value: 'Separado',
+        label: 'Separado'
+      }, {
+        value: 'Divorciado',
+        label: 'Divorciado'
+      }],
       bacabAsideText: 'Nuevo Paciente',
       modalOpen: false,
       tableConfig: [{
-        acciones: true,
-        accionesSlot: "acciones"
-      }, [{
         header: {
           name: 'Nombre',
           prop: 'fullname',
@@ -4852,7 +5007,7 @@ __webpack_require__.r(__webpack_exports__);
           type: 'slot',
           slot: 'actions'
         }
-      }]]
+      }]
     };
   },
   methods: {
@@ -89175,21 +89330,62 @@ var defaults = {
     allowDots: false,
     allowPrototypes: false,
     arrayLimit: 20,
+    charset: 'utf-8',
+    charsetSentinel: false,
     decoder: utils.decode,
     delimiter: '&',
     depth: 5,
+    ignoreQueryPrefix: false,
+    interpretNumericEntities: false,
     parameterLimit: 1000,
+    parseArrays: true,
     plainObjects: false,
     strictNullHandling: false
 };
+
+var interpretNumericEntities = function (str) {
+    return str.replace(/&#(\d+);/g, function ($0, numberStr) {
+        return String.fromCharCode(parseInt(numberStr, 10));
+    });
+};
+
+// This is what browsers will submit when the ✓ character occurs in an
+// application/x-www-form-urlencoded body and the encoding of the page containing
+// the form is iso-8859-1, or when the submitted form has an accept-charset
+// attribute of iso-8859-1. Presumably also with other charsets that do not contain
+// the ✓ character, such as us-ascii.
+var isoSentinel = 'utf8=%26%2310003%3B'; // encodeURIComponent('&#10003;')
+
+// These are the percent-encoded utf-8 octets representing a checkmark, indicating that the request actually is utf-8 encoded.
+var charsetSentinel = 'utf8=%E2%9C%93'; // encodeURIComponent('✓')
 
 var parseValues = function parseQueryStringValues(str, options) {
     var obj = {};
     var cleanStr = options.ignoreQueryPrefix ? str.replace(/^\?/, '') : str;
     var limit = options.parameterLimit === Infinity ? undefined : options.parameterLimit;
     var parts = cleanStr.split(options.delimiter, limit);
+    var skipIndex = -1; // Keep track of where the utf8 sentinel was found
+    var i;
 
-    for (var i = 0; i < parts.length; ++i) {
+    var charset = options.charset;
+    if (options.charsetSentinel) {
+        for (i = 0; i < parts.length; ++i) {
+            if (parts[i].indexOf('utf8=') === 0) {
+                if (parts[i] === charsetSentinel) {
+                    charset = 'utf-8';
+                } else if (parts[i] === isoSentinel) {
+                    charset = 'iso-8859-1';
+                }
+                skipIndex = i;
+                i = parts.length; // The eslint settings do not allow break;
+            }
+        }
+    }
+
+    for (i = 0; i < parts.length; ++i) {
+        if (i === skipIndex) {
+            continue;
+        }
         var part = parts[i];
 
         var bracketEqualsPos = part.indexOf(']=');
@@ -89197,14 +89393,18 @@ var parseValues = function parseQueryStringValues(str, options) {
 
         var key, val;
         if (pos === -1) {
-            key = options.decoder(part, defaults.decoder);
+            key = options.decoder(part, defaults.decoder, charset);
             val = options.strictNullHandling ? null : '';
         } else {
-            key = options.decoder(part.slice(0, pos), defaults.decoder);
-            val = options.decoder(part.slice(pos + 1), defaults.decoder);
+            key = options.decoder(part.slice(0, pos), defaults.decoder, charset);
+            val = options.decoder(part.slice(pos + 1), defaults.decoder, charset);
+        }
+
+        if (val && options.interpretNumericEntities && charset === 'iso-8859-1') {
+            val = interpretNumericEntities(val);
         }
         if (has.call(obj, key)) {
-            obj[key] = [].concat(obj[key]).concat(val);
+            obj[key] = utils.combine(obj[key], val);
         } else {
             obj[key] = val;
         }
@@ -89220,14 +89420,15 @@ var parseObject = function (chain, val, options) {
         var obj;
         var root = chain[i];
 
-        if (root === '[]') {
-            obj = [];
-            obj = obj.concat(leaf);
+        if (root === '[]' && options.parseArrays) {
+            obj = [].concat(leaf);
         } else {
             obj = options.plainObjects ? Object.create(null) : {};
             var cleanRoot = root.charAt(0) === '[' && root.charAt(root.length - 1) === ']' ? root.slice(1, -1) : root;
             var index = parseInt(cleanRoot, 10);
-            if (
+            if (!options.parseArrays && cleanRoot === '') {
+                obj = { 0: leaf };
+            } else if (
                 !isNaN(index)
                 && root !== cleanRoot
                 && String(index) === cleanRoot
@@ -89269,8 +89470,7 @@ var parseKeys = function parseQueryStringKeys(givenKey, val, options) {
 
     var keys = [];
     if (parent) {
-        // If we aren't using plain objects, optionally prefix keys
-        // that would overwrite object prototype properties
+        // If we aren't using plain objects, optionally prefix keys that would overwrite object prototype properties
         if (!options.plainObjects && has.call(Object.prototype, parent)) {
             if (!options.allowPrototypes) {
                 return;
@@ -89315,11 +89515,18 @@ module.exports = function (str, opts) {
     options.arrayLimit = typeof options.arrayLimit === 'number' ? options.arrayLimit : defaults.arrayLimit;
     options.parseArrays = options.parseArrays !== false;
     options.decoder = typeof options.decoder === 'function' ? options.decoder : defaults.decoder;
-    options.allowDots = typeof options.allowDots === 'boolean' ? options.allowDots : defaults.allowDots;
+    options.allowDots = typeof options.allowDots === 'undefined' ? defaults.allowDots : !!options.allowDots;
     options.plainObjects = typeof options.plainObjects === 'boolean' ? options.plainObjects : defaults.plainObjects;
     options.allowPrototypes = typeof options.allowPrototypes === 'boolean' ? options.allowPrototypes : defaults.allowPrototypes;
     options.parameterLimit = typeof options.parameterLimit === 'number' ? options.parameterLimit : defaults.parameterLimit;
     options.strictNullHandling = typeof options.strictNullHandling === 'boolean' ? options.strictNullHandling : defaults.strictNullHandling;
+
+    if (typeof options.charset !== 'undefined' && options.charset !== 'utf-8' && options.charset !== 'iso-8859-1') {
+        throw new Error('The charset option must be either utf-8, iso-8859-1, or undefined');
+    }
+    if (typeof options.charset === 'undefined') {
+        options.charset = defaults.charset;
+    }
 
     if (str === '' || str === null || typeof str === 'undefined') {
         return options.plainObjects ? Object.create(null) : {};
@@ -89368,13 +89575,25 @@ var arrayPrefixGenerators = {
     }
 };
 
+var isArray = Array.isArray;
+var push = Array.prototype.push;
+var pushToArray = function (arr, valueOrArray) {
+    push.apply(arr, isArray(valueOrArray) ? valueOrArray : [valueOrArray]);
+};
+
 var toISO = Date.prototype.toISOString;
 
 var defaults = {
+    addQueryPrefix: false,
+    allowDots: false,
+    charset: 'utf-8',
+    charsetSentinel: false,
     delimiter: '&',
     encode: true,
     encoder: utils.encode,
     encodeValuesOnly: false,
+    // deprecated
+    indices: false,
     serializeDate: function serializeDate(date) { // eslint-disable-line func-name-matching
         return toISO.call(date);
     },
@@ -89394,16 +89613,19 @@ var stringify = function stringify( // eslint-disable-line func-name-matching
     allowDots,
     serializeDate,
     formatter,
-    encodeValuesOnly
+    encodeValuesOnly,
+    charset
 ) {
     var obj = object;
     if (typeof filter === 'function') {
         obj = filter(prefix, obj);
     } else if (obj instanceof Date) {
         obj = serializeDate(obj);
-    } else if (obj === null) {
+    }
+
+    if (obj === null) {
         if (strictNullHandling) {
-            return encoder && !encodeValuesOnly ? encoder(prefix, defaults.encoder) : prefix;
+            return encoder && !encodeValuesOnly ? encoder(prefix, defaults.encoder, charset) : prefix;
         }
 
         obj = '';
@@ -89411,8 +89633,8 @@ var stringify = function stringify( // eslint-disable-line func-name-matching
 
     if (typeof obj === 'string' || typeof obj === 'number' || typeof obj === 'boolean' || utils.isBuffer(obj)) {
         if (encoder) {
-            var keyValue = encodeValuesOnly ? prefix : encoder(prefix, defaults.encoder);
-            return [formatter(keyValue) + '=' + formatter(encoder(obj, defaults.encoder))];
+            var keyValue = encodeValuesOnly ? prefix : encoder(prefix, defaults.encoder, charset);
+            return [formatter(keyValue) + '=' + formatter(encoder(obj, defaults.encoder, charset))];
         }
         return [formatter(prefix) + '=' + formatter(String(obj))];
     }
@@ -89439,7 +89661,7 @@ var stringify = function stringify( // eslint-disable-line func-name-matching
         }
 
         if (Array.isArray(obj)) {
-            values = values.concat(stringify(
+            pushToArray(values, stringify(
                 obj[key],
                 generateArrayPrefix(prefix, key),
                 generateArrayPrefix,
@@ -89451,10 +89673,11 @@ var stringify = function stringify( // eslint-disable-line func-name-matching
                 allowDots,
                 serializeDate,
                 formatter,
-                encodeValuesOnly
+                encodeValuesOnly,
+                charset
             ));
         } else {
-            values = values.concat(stringify(
+            pushToArray(values, stringify(
                 obj[key],
                 prefix + (allowDots ? '.' + key : '[' + key + ']'),
                 generateArrayPrefix,
@@ -89466,7 +89689,8 @@ var stringify = function stringify( // eslint-disable-line func-name-matching
                 allowDots,
                 serializeDate,
                 formatter,
-                encodeValuesOnly
+                encodeValuesOnly,
+                charset
             ));
         }
     }
@@ -89488,9 +89712,14 @@ module.exports = function (object, opts) {
     var encode = typeof options.encode === 'boolean' ? options.encode : defaults.encode;
     var encoder = typeof options.encoder === 'function' ? options.encoder : defaults.encoder;
     var sort = typeof options.sort === 'function' ? options.sort : null;
-    var allowDots = typeof options.allowDots === 'undefined' ? false : options.allowDots;
+    var allowDots = typeof options.allowDots === 'undefined' ? defaults.allowDots : !!options.allowDots;
     var serializeDate = typeof options.serializeDate === 'function' ? options.serializeDate : defaults.serializeDate;
     var encodeValuesOnly = typeof options.encodeValuesOnly === 'boolean' ? options.encodeValuesOnly : defaults.encodeValuesOnly;
+    var charset = options.charset || defaults.charset;
+    if (typeof options.charset !== 'undefined' && options.charset !== 'utf-8' && options.charset !== 'iso-8859-1') {
+        throw new Error('The charset option must be either utf-8, iso-8859-1, or undefined');
+    }
+
     if (typeof options.format === 'undefined') {
         options.format = formats['default'];
     } else if (!Object.prototype.hasOwnProperty.call(formats.formatters, options.format)) {
@@ -89539,8 +89768,7 @@ module.exports = function (object, opts) {
         if (skipNulls && obj[key] === null) {
             continue;
         }
-
-        keys = keys.concat(stringify(
+        pushToArray(keys, stringify(
             obj[key],
             key,
             generateArrayPrefix,
@@ -89552,12 +89780,23 @@ module.exports = function (object, opts) {
             allowDots,
             serializeDate,
             formatter,
-            encodeValuesOnly
+            encodeValuesOnly,
+            charset
         ));
     }
 
     var joined = keys.join(delimiter);
     var prefix = options.addQueryPrefix === true ? '?' : '';
+
+    if (options.charsetSentinel) {
+        if (charset === 'iso-8859-1') {
+            // encodeURIComponent('&#10003;'), the "numeric entity" representation of a checkmark
+            prefix += 'utf8=%26%2310003%3B&';
+        } else {
+            // encodeURIComponent('✓')
+            prefix += 'utf8=%E2%9C%93&';
+        }
+    }
 
     return joined.length > 0 ? prefix + joined : '';
 };
@@ -89587,11 +89826,9 @@ var hexTable = (function () {
 }());
 
 var compactQueue = function compactQueue(queue) {
-    var obj;
-
-    while (queue.length) {
+    while (queue.length > 1) {
         var item = queue.pop();
-        obj = item.obj[item.prop];
+        var obj = item.obj[item.prop];
 
         if (Array.isArray(obj)) {
             var compacted = [];
@@ -89605,8 +89842,6 @@ var compactQueue = function compactQueue(queue) {
             item.obj[item.prop] = compacted;
         }
     }
-
-    return obj;
 };
 
 var arrayToObject = function arrayToObject(source, options) {
@@ -89629,7 +89864,7 @@ var merge = function merge(target, source, options) {
         if (Array.isArray(target)) {
             target.push(source);
         } else if (typeof target === 'object') {
-            if (options.plainObjects || options.allowPrototypes || !has.call(Object.prototype, source)) {
+            if ((options && (options.plainObjects || options.allowPrototypes)) || !has.call(Object.prototype, source)) {
                 target[source] = true;
             }
         } else {
@@ -89682,15 +89917,21 @@ var assign = function assignSingleSource(target, source) {
     }, target);
 };
 
-var decode = function (str) {
+var decode = function (str, decoder, charset) {
+    var strWithoutPlus = str.replace(/\+/g, ' ');
+    if (charset === 'iso-8859-1') {
+        // unescape never throws, no try...catch needed:
+        return strWithoutPlus.replace(/%[0-9a-f]{2}/gi, unescape);
+    }
+    // utf-8
     try {
-        return decodeURIComponent(str.replace(/\+/g, ' '));
+        return decodeURIComponent(strWithoutPlus);
     } catch (e) {
-        return str;
+        return strWithoutPlus;
     }
 };
 
-var encode = function encode(str) {
+var encode = function encode(str, defaultEncoder, charset) {
     // This code was originally written by Brian White (mscdex) for the io.js core querystring library.
     // It has been adapted here for stricter adherence to RFC 3986
     if (str.length === 0) {
@@ -89698,6 +89939,12 @@ var encode = function encode(str) {
     }
 
     var string = typeof str === 'string' ? str : String(str);
+
+    if (charset === 'iso-8859-1') {
+        return escape(string).replace(/%u[0-9a-f]{4}/gi, function ($0) {
+            return '%26%23' + parseInt($0.slice(2), 16) + '%3B';
+        });
+    }
 
     var out = '';
     for (var i = 0; i < string.length; ++i) {
@@ -89761,7 +90008,9 @@ var compact = function compact(value) {
         }
     }
 
-    return compactQueue(queue);
+    compactQueue(queue);
+
+    return value;
 };
 
 var isRegExp = function isRegExp(obj) {
@@ -89776,9 +90025,14 @@ var isBuffer = function isBuffer(obj) {
     return !!(obj.constructor && obj.constructor.isBuffer && obj.constructor.isBuffer(obj));
 };
 
+var combine = function combine(a, b) {
+    return [].concat(a, b);
+};
+
 module.exports = {
     arrayToObject: arrayToObject,
     assign: assign,
+    combine: combine,
     compact: compact,
     decode: decode,
     encode: encode,
@@ -92157,11 +92411,11 @@ var render = function() {
         _c("p", [_vm._v(_vm._s(_vm.name))])
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "lateral-aside_content" }, [
-        _c("div", { staticClass: "lateral-aside_content-panel" }, [
+      _c("div", { staticClass: "lateral-aside__aside-content " }, [
+        _c("div", { staticClass: "lateral-aside__content-panel" }, [
           _c(
             "div",
-            { staticClass: "lateral-aside_content-panel-body" },
+            { staticClass: "lateral-aside__content-panel-body" },
             [_vm._t("content")],
             2
           )
@@ -92699,7 +92953,7 @@ var render = function() {
               attrs: { type: "index", index: _vm.indexFunction, width: "50" }
             }),
             _vm._v(" "),
-            _vm._l(_vm.config[1], function(column, index) {
+            _vm._l(_vm.config, function(column, index) {
               return [
                 column.header.filter != null
                   ? _c("el-table-column", {
@@ -93048,16 +93302,430 @@ var render = function() {
                   _vm._v(" "),
                   _c(
                     "div",
-                    { staticClass: "box__body" },
+                    { staticClass: "box__body box--box-aside-hight" },
                     [
                       _c(
-                        "el-form",
-                        { ref: "patientForm", attrs: { model: _vm.form } },
+                        "el-tabs",
+                        { attrs: { type: "border-card" } },
                         [
                           _c(
-                            "el-form-item",
-                            { attrs: { label: "Activity name" } },
-                            [_c("el-input")],
+                            "el-tab-pane",
+                            [
+                              _c(
+                                "span",
+                                { attrs: { slot: "label" }, slot: "label" },
+                                [
+                                  _c("i", { staticClass: "el-icon-info" }),
+                                  _vm._v(" Información Básica")
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "el-form",
+                                {
+                                  ref: "patientForm",
+                                  attrs: {
+                                    size: "mini",
+                                    "status-icon": "",
+                                    model: _vm.form,
+                                    rules: _vm.rules,
+                                    "label-width": "120px"
+                                  }
+                                },
+                                [
+                                  _c("div", { staticClass: "row" }, [
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass:
+                                          "col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                                      },
+                                      [
+                                        _c(
+                                          "el-form-item",
+                                          {
+                                            attrs: {
+                                              label: "Nombre",
+                                              prop: "name"
+                                            }
+                                          },
+                                          [
+                                            _c("el-input", {
+                                              attrs: {
+                                                type: "text",
+                                                placeholder:
+                                                  "Escribe el nombre del paciente",
+                                                "suffix-icon": "el-icon-edit"
+                                              },
+                                              model: {
+                                                value: _vm.form.name,
+                                                callback: function($$v) {
+                                                  _vm.$set(
+                                                    _vm.form,
+                                                    "name",
+                                                    $$v
+                                                  )
+                                                },
+                                                expression: "form.name"
+                                              }
+                                            })
+                                          ],
+                                          1
+                                        )
+                                      ],
+                                      1
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("div", { staticClass: "row" }, [
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass:
+                                          "col-xs-12 col-sm-6 col-md-6 col-lg-6"
+                                      },
+                                      [
+                                        _c(
+                                          "el-form-item",
+                                          {
+                                            attrs: {
+                                              label: "Apellido Paterno",
+                                              prop: "last_name"
+                                            }
+                                          },
+                                          [
+                                            _c("el-input", {
+                                              attrs: {
+                                                type: "text",
+                                                placeholder:
+                                                  "Escribe el nombre del paciente",
+                                                "suffix-icon": "el-icon-edit"
+                                              },
+                                              model: {
+                                                value: _vm.form.last_name,
+                                                callback: function($$v) {
+                                                  _vm.$set(
+                                                    _vm.form,
+                                                    "last_name",
+                                                    $$v
+                                                  )
+                                                },
+                                                expression: "form.last_name"
+                                              }
+                                            })
+                                          ],
+                                          1
+                                        )
+                                      ],
+                                      1
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass:
+                                          "col-xs-12 col-sm-6 col-md-6 col-lg-6"
+                                      },
+                                      [
+                                        _c(
+                                          "el-form-item",
+                                          {
+                                            attrs: {
+                                              label: "Apellido Materno",
+                                              prop: "mother_last_name"
+                                            }
+                                          },
+                                          [
+                                            _c("el-input", {
+                                              attrs: {
+                                                type: "text",
+                                                placeholder:
+                                                  "Escribe el nombre del paciente",
+                                                "suffix-icon": "el-icon-edit"
+                                              },
+                                              model: {
+                                                value:
+                                                  _vm.form.mother_last_name,
+                                                callback: function($$v) {
+                                                  _vm.$set(
+                                                    _vm.form,
+                                                    "mother_last_name",
+                                                    $$v
+                                                  )
+                                                },
+                                                expression:
+                                                  "form.mother_last_name"
+                                              }
+                                            })
+                                          ],
+                                          1
+                                        )
+                                      ],
+                                      1
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("div", { staticClass: "row" }, [
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass:
+                                          "col-xs-12, col-sm-6 col-md-6 col-lg-6"
+                                      },
+                                      [
+                                        _c(
+                                          "el-form-item",
+                                          {
+                                            attrs: {
+                                              label: "Sexo",
+                                              prop: "gender"
+                                            }
+                                          },
+                                          [
+                                            _c(
+                                              "el-select",
+                                              {
+                                                attrs: {
+                                                  placeholder:
+                                                    "Seleciona el sexo"
+                                                },
+                                                model: {
+                                                  value: _vm.form.gender,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.form,
+                                                      "gender",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression: "form.gender"
+                                                }
+                                              },
+                                              _vm._l(
+                                                _vm.tableConfig[1].header.filter
+                                                  .options,
+                                                function(item) {
+                                                  return _c("el-option", {
+                                                    key: item.value,
+                                                    attrs: {
+                                                      label: item.label,
+                                                      value: item.value
+                                                    }
+                                                  })
+                                                }
+                                              ),
+                                              1
+                                            )
+                                          ],
+                                          1
+                                        )
+                                      ],
+                                      1
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass:
+                                          "col-xs-12 col-sm-6 col-md-6 col-lg-6"
+                                      },
+                                      [
+                                        _c(
+                                          "el-form-item",
+                                          {
+                                            attrs: {
+                                              label: "Fecha de nacimiento",
+                                              prop: "birthday"
+                                            }
+                                          },
+                                          [
+                                            _c(
+                                              "div",
+                                              { staticClass: "block" },
+                                              [
+                                                _c("el-date-picker", {
+                                                  attrs: {
+                                                    type: "date",
+                                                    "prefix-icon":
+                                                      "el-icon-date",
+                                                    placeholder: "Toma un día"
+                                                  },
+                                                  model: {
+                                                    value: _vm.form.birthday,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.form,
+                                                        "birthday",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression: "form.birthday"
+                                                  }
+                                                })
+                                              ],
+                                              1
+                                            )
+                                          ]
+                                        )
+                                      ],
+                                      1
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("div", { staticClass: "row" }, [
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass:
+                                          "col-xs-12, col-sm-6 col-md-6 col-lg-6"
+                                      },
+                                      [
+                                        _c(
+                                          "el-form-item",
+                                          {
+                                            attrs: {
+                                              label: "Tipo de sangre",
+                                              prop: "blood_group"
+                                            }
+                                          },
+                                          [
+                                            _c(
+                                              "el-select",
+                                              {
+                                                attrs: {
+                                                  placeholder:
+                                                    "Selecciona el tipo de sangre"
+                                                },
+                                                model: {
+                                                  value: _vm.form.blood_group,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.form,
+                                                      "blood_group",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression: "form.blood_group"
+                                                }
+                                              },
+                                              _vm._l(
+                                                _vm.tableConfig[3].header.filter
+                                                  .options,
+                                                function(item) {
+                                                  return _c("el-option", {
+                                                    key: item.value,
+                                                    attrs: {
+                                                      label: item.label,
+                                                      value: item.value
+                                                    }
+                                                  })
+                                                }
+                                              ),
+                                              1
+                                            )
+                                          ],
+                                          1
+                                        )
+                                      ],
+                                      1
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass:
+                                          "col-xs-12 col-sm-6 col-md-6 col-lg-6"
+                                      },
+                                      [
+                                        _c(
+                                          "el-form-item",
+                                          { attrs: { label: "Estado civil" } },
+                                          [
+                                            _c(
+                                              "el-select",
+                                              {
+                                                attrs: {
+                                                  placeholder:
+                                                    "Selecciona un estado civil"
+                                                },
+                                                model: {
+                                                  value:
+                                                    _vm.form.marital_status,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.form,
+                                                      "marital_status",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "form.marital_status"
+                                                }
+                                              },
+                                              _vm._l(
+                                                _vm.maritalStatus,
+                                                function(item) {
+                                                  return _c("el-option", {
+                                                    key: item.value,
+                                                    attrs: {
+                                                      label: item.label,
+                                                      value: item.value
+                                                    }
+                                                  })
+                                                }
+                                              ),
+                                              1
+                                            )
+                                          ],
+                                          1
+                                        )
+                                      ],
+                                      1
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("div", { staticClass: "row" }, [
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass:
+                                          "col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                                      },
+                                      [
+                                        _c(
+                                          "el-form-item",
+                                          { attrs: { label: "Alergías" } },
+                                          [
+                                            _c("el-input", {
+                                              attrs: {
+                                                type: "textarea",
+                                                rows: 3,
+                                                placeholder:
+                                                  "Alergías del paciente",
+                                                "suffix-icon": "el-icon-edit"
+                                              },
+                                              model: {
+                                                value: _vm.form.allergies,
+                                                callback: function($$v) {
+                                                  _vm.$set(
+                                                    _vm.form,
+                                                    "allergies",
+                                                    $$v
+                                                  )
+                                                },
+                                                expression: "form.allergies"
+                                              }
+                                            })
+                                          ],
+                                          1
+                                        )
+                                      ],
+                                      1
+                                    )
+                                  ])
+                                ]
+                              )
+                            ],
                             1
                           )
                         ],
@@ -109245,9 +109913,9 @@ if (token) {
   console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
-if (Object({"MIX_PUSHER_APP_CLUSTER":"mt1","MIX_PUSHER_APP_KEY":"","NODE_ENV":"development"}).APP_ENV === 'local') {
+if (Object({"MIX_PUSHER_APP_KEY":"6b7f0e72dc2f462b2a8b","MIX_PUSHER_APP_CLUSTER":"mt1","NODE_ENV":"development"}).APP_ENV === 'local') {
   window.axios.defaults.baseURL = '';
-} else if (Object({"MIX_PUSHER_APP_CLUSTER":"mt1","MIX_PUSHER_APP_KEY":"","NODE_ENV":"development"}).APP_ENV === 'production') {
+} else if (Object({"MIX_PUSHER_APP_KEY":"6b7f0e72dc2f462b2a8b","MIX_PUSHER_APP_CLUSTER":"mt1","NODE_ENV":"development"}).APP_ENV === 'production') {
   window.axios.defaults.baseURL = 'https://bacab.cobos.xyz/';
 }
 /**
@@ -109261,7 +109929,7 @@ if (Object({"MIX_PUSHER_APP_CLUSTER":"mt1","MIX_PUSHER_APP_KEY":"","NODE_ENV":"d
 window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
 window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   broadcaster: 'pusher',
-  key: "",
+  key: "6b7f0e72dc2f462b2a8b",
   cluster: "mt1",
   encrypted: true
 });
@@ -111385,9 +112053,9 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\cobose\krow\sh\resources\js\app.js */"./resources/js/app.js");
-__webpack_require__(/*! C:\Users\cobose\krow\sh\resources\sass\app.scss */"./resources/sass/app.scss");
-module.exports = __webpack_require__(/*! C:\Users\cobose\krow\sh\resources\sass\log-in.scss */"./resources/sass/log-in.scss");
+__webpack_require__(/*! /Users/owl/Krow/Apps/sh/resources/js/app.js */"./resources/js/app.js");
+__webpack_require__(/*! /Users/owl/Krow/Apps/sh/resources/sass/app.scss */"./resources/sass/app.scss");
+module.exports = __webpack_require__(/*! /Users/owl/Krow/Apps/sh/resources/sass/log-in.scss */"./resources/sass/log-in.scss");
 
 
 /***/ })
