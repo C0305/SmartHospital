@@ -4,5 +4,8 @@ export default {
     },
     user(state, payload){
         state.user = payload;
+    },
+    mexicoStates(state, payload) {
+        state.mexicoStates = payload;
     }
 }

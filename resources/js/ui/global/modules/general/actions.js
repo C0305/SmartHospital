@@ -6,6 +6,7 @@ export default {
     bacabFirstData(context) {
         axios.get('/show').then( r => {
             context.commit('user', r.data.user);
+            context.commit('mexicoStates', r.data.mexicoStates);
         });
     }
 }
