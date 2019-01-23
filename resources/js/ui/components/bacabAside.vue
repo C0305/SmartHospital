@@ -2,7 +2,7 @@
     <transition name="fade">
         <div class="lateral-aside">
             <div class="lateral-aside__top-bar">
-                <span type="button" class="fas fa-times-circle" @click="closeAside"></span>
+                <span type="button" class="fas fa-times-circle" @click="close"></span>
                 <p>{{ name }}</p>
             </div>
             <div class="lateral-aside__aside-content ">
@@ -18,7 +18,7 @@
                 </template>
                 <template v-else-if="saveButton === true" >
                     <el-button size="mini" icon="fas fa-save" @click="saveAndClose" round>
-                        Save
+                        Guardar
                     </el-button>
                 </template>
             </div>
@@ -45,12 +45,12 @@
         },
         methods: {
             close() {
-                this.$confirm('You are going to close the aside. Continue?', 'Warning', {
+                this.$confirm('Estas a punto de cerrar el lateral ¿Desea continuar?', 'Warning', {
                     confirmButtonText: 'OK',
                     cancelButtonText: 'Cancel',
                     type: 'warning'
                 }).then(() => {
-                    if(this.closeFunction != null()){
+                    if(this.closeFunction != null){
                         this.closeFunction();
                     }
                     this.closeAside()
@@ -60,7 +60,7 @@
             saveAndClose(){
                 try{
                     this.saveButtonFunction();
-                    if(this.closeFunction != null()){
+                    if(this.closeFunction != null){
                         this.closeFunction();
                     }
                     this.closeAside()
