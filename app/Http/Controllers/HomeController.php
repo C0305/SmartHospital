@@ -4,6 +4,7 @@ namespace SmartHospital\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use SmartHospital\Models\General\MexicoState;
 
 class HomeController extends Controller
 {
@@ -36,7 +37,8 @@ class HomeController extends Controller
                     'events' => 'false',
                     'messages' => 'false',
                 ]
-            ]
+            ],
+            'mexicoStates' => MexicoState::select('id','federal_entity as label')->get()
         ];
 
         return $data;
