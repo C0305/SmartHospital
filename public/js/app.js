@@ -3948,12 +3948,12 @@ __webpack_require__.r(__webpack_exports__);
     close: function close() {
       var _this = this;
 
-      this.$confirm('You are going to close the aside. Continue?', 'Warning', {
+      this.$confirm('Estas a punto de cerrar el lateral ¿Desea continuar?', 'Warning', {
         confirmButtonText: 'OK',
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(function () {
-        if (_this.closeFunction != null()) {
+        if (_this.closeFunction != null) {
           _this.closeFunction();
         }
 
@@ -3964,7 +3964,7 @@ __webpack_require__.r(__webpack_exports__);
       try {
         this.saveButtonFunction();
 
-        if (this.closeFunction != null()) {
+        if (this.closeFunction != null) {
           this.closeFunction();
         }
 
@@ -4682,6 +4682,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ui_components_bacabTables__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../ui/components/bacabTables */ "./resources/js/ui/components/bacabTables.vue");
 /* harmony import */ var _ui_components_bacabAside__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../ui/components/bacabAside */ "./resources/js/ui/components/bacabAside.vue");
 /* harmony import */ var _ui_global_mixins_aside__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../ui/global/mixins/aside */ "./resources/js/ui/global/mixins/aside.js");
+/* harmony import */ var _ui_global_mixins_general__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../ui/global/mixins/general */ "./resources/js/ui/global/mixins/general.js");
 //
 //
 //
@@ -4859,12 +4860,128 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "index",
-  mixins: [_ui_global_mixins_aside__WEBPACK_IMPORTED_MODULE_2__["default"]],
+  mixins: [_ui_global_mixins_aside__WEBPACK_IMPORTED_MODULE_2__["default"], _ui_global_mixins_general__WEBPACK_IMPORTED_MODULE_3__["default"]],
   components: {
     BacabAside: _ui_components_bacabAside__WEBPACK_IMPORTED_MODULE_1__["default"],
     BacabTables: _ui_components_bacabTables__WEBPACK_IMPORTED_MODULE_0__["default"]
@@ -4879,37 +4996,55 @@ __webpack_require__.r(__webpack_exports__);
         birthday: '',
         blood_group: '',
         marital_status: '',
-        allergies: ''
+        allergies: '',
+        mobile: '',
+        email: '',
+        address: {
+          street: '',
+          number: '',
+          apartment_number: '',
+          neighbourhood: '',
+          city: '',
+          zip_code: ''
+        }
       },
       rules: {
         name: [{
           required: true,
           message: 'El nombre es requerido',
-          trigger: 'blur'
+          trigger: ['blur', 'change']
         }],
         last_name: [{
           required: true,
           message: 'El nombre es requerido',
-          trigger: 'blur'
-        }],
-        mother_last_name: [{
-          required: true,
-          message: 'El apellido es requerido',
-          trigger: 'blur'
+          trigger: ['blur', 'change']
         }],
         gender: [{
           required: true,
           message: 'Es requerido saber el sexo del paciente',
-          trigger: 'change'
+          trigger: ['blur', 'change']
         }],
         blood_group: [{
           required: true,
           message: 'Se requiere el tipo de sangre para continuar',
+          trigger: ['blur', 'change']
+        }],
+        birthday: [{
+          type: 'date',
+          required: true,
+          message: 'Por favor ingrese la fecha de nacimiento del paciente',
           trigger: 'change'
-        }] //                birthday: [
-        //                    { type: 'date', required: true, message: 'Por favor ingrese la fecha de nacimiento del paciente', trigger: 'change' }
-        //                ]
-
+        }],
+        mobile: [{
+          required: true,
+          message: 'Nececitamos un numero de telefono',
+          trigger: ['blur', 'change']
+        }],
+        email: [{
+          type: 'email',
+          message: 'Please input correct email address',
+          trigger: ['blur', 'change']
+        }]
       },
       labelPosition: 'top',
       maritalStatus: [{
@@ -5014,9 +5149,7 @@ __webpack_require__.r(__webpack_exports__);
     openModal: function openModal() {
       this.modalOpen ? this.modalOpen = false : this.modalOpen = true;
     },
-    test: function test() {
-      console.log('simon ese');
-    }
+    saveForm: function saveForm() {}
   }
 });
 
@@ -92405,7 +92538,7 @@ var render = function() {
         _c("span", {
           staticClass: "fas fa-times-circle",
           attrs: { type: "button" },
-          on: { click: _vm.closeAside }
+          on: { click: _vm.close }
         }),
         _vm._v(" "),
         _c("p", [_vm._v(_vm._s(_vm.name))])
@@ -92436,7 +92569,7 @@ var render = function() {
                       attrs: { size: "mini", icon: "fas fa-save", round: "" },
                       on: { click: _vm.saveAndClose }
                     },
-                    [_vm._v("\n                    Save\n                ")]
+                    [_vm._v("\n                    Guardar\n                ")]
                   )
                 ]
               : _vm._e()
@@ -93285,7 +93418,14 @@ var render = function() {
                 [
                   _c(
                     "el-button",
-                    { attrs: { size: "mini", icon: "fas fa-save", round: "" } },
+                    {
+                      attrs: { size: "mini", icon: "fas fa-save", round: "" },
+                      on: {
+                        click: function($event) {
+                          _vm.saveForm()
+                        }
+                      }
+                    },
                     [_vm._v("\n                Save\n            ")]
                   )
                 ],
@@ -93305,425 +93445,840 @@ var render = function() {
                     { staticClass: "box__body box--box-aside-hight" },
                     [
                       _c(
-                        "el-tabs",
-                        { attrs: { type: "border-card" } },
+                        "el-form",
+                        {
+                          ref: "patientForm",
+                          attrs: {
+                            size: "mini",
+                            "status-icon": "",
+                            "label-position": _vm.labelPosition,
+                            model: _vm.form,
+                            rules: _vm.rules,
+                            "label-width": "120px"
+                          }
+                        },
                         [
                           _c(
-                            "el-tab-pane",
+                            "el-tabs",
+                            { attrs: { type: "border-card" } },
                             [
                               _c(
-                                "span",
-                                { attrs: { slot: "label" }, slot: "label" },
+                                "el-tab-pane",
                                 [
-                                  _c("i", { staticClass: "el-icon-info" }),
-                                  _vm._v(" Información Básica")
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "el-form",
-                                {
-                                  ref: "patientForm",
-                                  attrs: {
-                                    size: "mini",
-                                    "status-icon": "",
-                                    model: _vm.form,
-                                    rules: _vm.rules,
-                                    "label-width": "120px"
-                                  }
-                                },
-                                [
-                                  _c("div", { staticClass: "row" }, [
-                                    _c(
-                                      "div",
-                                      {
-                                        staticClass:
-                                          "col-xs-12 col-sm-12 col-md-12 col-lg-12"
-                                      },
-                                      [
-                                        _c(
-                                          "el-form-item",
-                                          {
-                                            attrs: {
-                                              label: "Nombre",
-                                              prop: "name"
-                                            }
-                                          },
-                                          [
-                                            _c("el-input", {
-                                              attrs: {
-                                                type: "text",
-                                                placeholder:
-                                                  "Escribe el nombre del paciente",
-                                                "suffix-icon": "el-icon-edit"
-                                              },
-                                              model: {
-                                                value: _vm.form.name,
-                                                callback: function($$v) {
-                                                  _vm.$set(
-                                                    _vm.form,
-                                                    "name",
-                                                    $$v
-                                                  )
-                                                },
-                                                expression: "form.name"
-                                              }
-                                            })
-                                          ],
-                                          1
-                                        )
-                                      ],
-                                      1
-                                    )
-                                  ]),
+                                  _c(
+                                    "span",
+                                    { attrs: { slot: "label" }, slot: "label" },
+                                    [
+                                      _c("i", { staticClass: "el-icon-info" }),
+                                      _vm._v(" Información Básica")
+                                    ]
+                                  ),
                                   _vm._v(" "),
-                                  _c("div", { staticClass: "row" }, [
-                                    _c(
-                                      "div",
-                                      {
-                                        staticClass:
-                                          "col-xs-12 col-sm-6 col-md-6 col-lg-6"
-                                      },
-                                      [
-                                        _c(
-                                          "el-form-item",
-                                          {
-                                            attrs: {
-                                              label: "Apellido Paterno",
-                                              prop: "last_name"
-                                            }
-                                          },
-                                          [
-                                            _c("el-input", {
+                                  _c(
+                                    "el-row",
+                                    [
+                                      _c(
+                                        "el-col",
+                                        { attrs: { span: 24 } },
+                                        [
+                                          _c(
+                                            "el-form-item",
+                                            {
                                               attrs: {
-                                                type: "text",
-                                                placeholder:
-                                                  "Escribe el nombre del paciente",
-                                                "suffix-icon": "el-icon-edit"
-                                              },
-                                              model: {
-                                                value: _vm.form.last_name,
-                                                callback: function($$v) {
-                                                  _vm.$set(
-                                                    _vm.form,
-                                                    "last_name",
-                                                    $$v
-                                                  )
-                                                },
-                                                expression: "form.last_name"
+                                                label: "Nombre",
+                                                prop: "name"
                                               }
-                                            })
-                                          ],
-                                          1
-                                        )
-                                      ],
-                                      1
-                                    ),
-                                    _vm._v(" "),
-                                    _c(
-                                      "div",
-                                      {
-                                        staticClass:
-                                          "col-xs-12 col-sm-6 col-md-6 col-lg-6"
-                                      },
-                                      [
-                                        _c(
-                                          "el-form-item",
-                                          {
-                                            attrs: {
-                                              label: "Apellido Materno",
-                                              prop: "mother_last_name"
-                                            }
-                                          },
-                                          [
-                                            _c("el-input", {
-                                              attrs: {
-                                                type: "text",
-                                                placeholder:
-                                                  "Escribe el nombre del paciente",
-                                                "suffix-icon": "el-icon-edit"
-                                              },
-                                              model: {
-                                                value:
-                                                  _vm.form.mother_last_name,
-                                                callback: function($$v) {
-                                                  _vm.$set(
-                                                    _vm.form,
-                                                    "mother_last_name",
-                                                    $$v
-                                                  )
-                                                },
-                                                expression:
-                                                  "form.mother_last_name"
-                                              }
-                                            })
-                                          ],
-                                          1
-                                        )
-                                      ],
-                                      1
-                                    )
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("div", { staticClass: "row" }, [
-                                    _c(
-                                      "div",
-                                      {
-                                        staticClass:
-                                          "col-xs-12, col-sm-6 col-md-6 col-lg-6"
-                                      },
-                                      [
-                                        _c(
-                                          "el-form-item",
-                                          {
-                                            attrs: {
-                                              label: "Sexo",
-                                              prop: "gender"
-                                            }
-                                          },
-                                          [
-                                            _c(
-                                              "el-select",
-                                              {
+                                            },
+                                            [
+                                              _c("el-input", {
                                                 attrs: {
+                                                  type: "text",
                                                   placeholder:
-                                                    "Seleciona el sexo"
+                                                    "Escribe el nombre del paciente",
+                                                  "prefix-icon": "el-icon-edit"
                                                 },
                                                 model: {
-                                                  value: _vm.form.gender,
+                                                  value: _vm.form.name,
                                                   callback: function($$v) {
                                                     _vm.$set(
                                                       _vm.form,
-                                                      "gender",
+                                                      "name",
                                                       $$v
                                                     )
                                                   },
-                                                  expression: "form.gender"
+                                                  expression: "form.name"
                                                 }
-                                              },
-                                              _vm._l(
-                                                _vm.tableConfig[1].header.filter
-                                                  .options,
-                                                function(item) {
-                                                  return _c("el-option", {
-                                                    key: item.value,
-                                                    attrs: {
-                                                      label: item.label,
-                                                      value: item.value
-                                                    }
-                                                  })
-                                                }
-                                              ),
-                                              1
-                                            )
-                                          ],
-                                          1
-                                        )
-                                      ],
-                                      1
-                                    ),
-                                    _vm._v(" "),
-                                    _c(
-                                      "div",
-                                      {
-                                        staticClass:
-                                          "col-xs-12 col-sm-6 col-md-6 col-lg-6"
-                                      },
-                                      [
-                                        _c(
-                                          "el-form-item",
-                                          {
-                                            attrs: {
-                                              label: "Fecha de nacimiento",
-                                              prop: "birthday"
-                                            }
-                                          },
-                                          [
-                                            _c(
-                                              "div",
-                                              { staticClass: "block" },
-                                              [
-                                                _c("el-date-picker", {
-                                                  attrs: {
-                                                    type: "date",
-                                                    "prefix-icon":
-                                                      "el-icon-date",
-                                                    placeholder: "Toma un día"
-                                                  },
-                                                  model: {
-                                                    value: _vm.form.birthday,
-                                                    callback: function($$v) {
-                                                      _vm.$set(
-                                                        _vm.form,
-                                                        "birthday",
-                                                        $$v
-                                                      )
-                                                    },
-                                                    expression: "form.birthday"
-                                                  }
-                                                })
-                                              ],
-                                              1
-                                            )
-                                          ]
-                                        )
-                                      ],
-                                      1
-                                    )
-                                  ]),
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
                                   _vm._v(" "),
-                                  _c("div", { staticClass: "row" }, [
-                                    _c(
-                                      "div",
-                                      {
-                                        staticClass:
-                                          "col-xs-12, col-sm-6 col-md-6 col-lg-6"
-                                      },
-                                      [
-                                        _c(
-                                          "el-form-item",
-                                          {
-                                            attrs: {
-                                              label: "Tipo de sangre",
-                                              prop: "blood_group"
-                                            }
-                                          },
-                                          [
-                                            _c(
-                                              "el-select",
-                                              {
+                                  _c(
+                                    "el-row",
+                                    [
+                                      _c(
+                                        "el-col",
+                                        { attrs: { span: 12 } },
+                                        [
+                                          _c(
+                                            "el-form-item",
+                                            {
+                                              attrs: {
+                                                label: "Apellido Paterno",
+                                                prop: "last_name"
+                                              }
+                                            },
+                                            [
+                                              _c("el-input", {
                                                 attrs: {
+                                                  type: "text",
                                                   placeholder:
-                                                    "Selecciona el tipo de sangre"
+                                                    "Escribe el nombre del paciente",
+                                                  "prefix-icon": "el-icon-edit"
                                                 },
                                                 model: {
-                                                  value: _vm.form.blood_group,
+                                                  value: _vm.form.last_name,
                                                   callback: function($$v) {
                                                     _vm.$set(
                                                       _vm.form,
-                                                      "blood_group",
+                                                      "last_name",
                                                       $$v
                                                     )
                                                   },
-                                                  expression: "form.blood_group"
+                                                  expression: "form.last_name"
                                                 }
-                                              },
-                                              _vm._l(
-                                                _vm.tableConfig[3].header.filter
-                                                  .options,
-                                                function(item) {
-                                                  return _c("el-option", {
-                                                    key: item.value,
-                                                    attrs: {
-                                                      label: item.label,
-                                                      value: item.value
-                                                    }
-                                                  })
-                                                }
-                                              ),
-                                              1
-                                            )
-                                          ],
-                                          1
-                                        )
-                                      ],
-                                      1
-                                    ),
-                                    _vm._v(" "),
-                                    _c(
-                                      "div",
-                                      {
-                                        staticClass:
-                                          "col-xs-12 col-sm-6 col-md-6 col-lg-6"
-                                      },
-                                      [
-                                        _c(
-                                          "el-form-item",
-                                          { attrs: { label: "Estado civil" } },
-                                          [
-                                            _c(
-                                              "el-select",
-                                              {
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "el-col",
+                                        { attrs: { span: 12 } },
+                                        [
+                                          _c(
+                                            "el-form-item",
+                                            {
+                                              attrs: {
+                                                label: "Apellido Materno"
+                                              }
+                                            },
+                                            [
+                                              _c("el-input", {
                                                 attrs: {
+                                                  type: "text",
                                                   placeholder:
-                                                    "Selecciona un estado civil"
+                                                    "Escribe el nombre del paciente",
+                                                  "prefix-icon": "el-icon-edit"
                                                 },
                                                 model: {
                                                   value:
-                                                    _vm.form.marital_status,
+                                                    _vm.form.mother_last_name,
                                                   callback: function($$v) {
                                                     _vm.$set(
                                                       _vm.form,
-                                                      "marital_status",
+                                                      "mother_last_name",
                                                       $$v
                                                     )
                                                   },
                                                   expression:
-                                                    "form.marital_status"
+                                                    "form.mother_last_name"
                                                 }
-                                              },
-                                              _vm._l(
-                                                _vm.maritalStatus,
-                                                function(item) {
-                                                  return _c("el-option", {
-                                                    key: item.value,
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "el-row",
+                                    [
+                                      _c(
+                                        "el-col",
+                                        { attrs: { span: 6 } },
+                                        [
+                                          _c(
+                                            "el-form-item",
+                                            {
+                                              attrs: {
+                                                label: "Sexo",
+                                                prop: "gender"
+                                              }
+                                            },
+                                            [
+                                              _c(
+                                                "el-select",
+                                                {
+                                                  attrs: {
+                                                    placeholder:
+                                                      "Seleciona el sexo"
+                                                  },
+                                                  model: {
+                                                    value: _vm.form.gender,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.form,
+                                                        "gender",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression: "form.gender"
+                                                  }
+                                                },
+                                                _vm._l(
+                                                  _vm.tableConfig[1].header
+                                                    .filter.options,
+                                                  function(item) {
+                                                    return _c("el-option", {
+                                                      key: item.value,
+                                                      attrs: {
+                                                        label: item.label,
+                                                        value: item.value
+                                                      }
+                                                    })
+                                                  }
+                                                ),
+                                                1
+                                              )
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "el-col",
+                                        { attrs: { span: 6 } },
+                                        [
+                                          _c(
+                                            "el-form-item",
+                                            {
+                                              attrs: {
+                                                label: "Fecha de nacimiento",
+                                                prop: "birthday"
+                                              }
+                                            },
+                                            [
+                                              _c(
+                                                "div",
+                                                { staticClass: "block" },
+                                                [
+                                                  _c("el-date-picker", {
                                                     attrs: {
-                                                      label: item.label,
-                                                      value: item.value
+                                                      type: "date",
+                                                      "prefix-icon":
+                                                        "el-icon-date",
+                                                      placeholder: "Toma un día"
+                                                    },
+                                                    model: {
+                                                      value: _vm.form.birthday,
+                                                      callback: function($$v) {
+                                                        _vm.$set(
+                                                          _vm.form,
+                                                          "birthday",
+                                                          $$v
+                                                        )
+                                                      },
+                                                      expression:
+                                                        "form.birthday"
                                                     }
                                                   })
-                                                }
-                                              ),
-                                              1
-                                            )
-                                          ],
-                                          1
-                                        )
-                                      ],
-                                      1
-                                    )
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("div", { staticClass: "row" }, [
-                                    _c(
-                                      "div",
-                                      {
-                                        staticClass:
-                                          "col-xs-12 col-sm-12 col-md-12 col-lg-12"
-                                      },
-                                      [
-                                        _c(
-                                          "el-form-item",
-                                          { attrs: { label: "Alergías" } },
-                                          [
-                                            _c("el-input", {
+                                                ],
+                                                1
+                                              )
+                                            ]
+                                          )
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "el-col",
+                                        { attrs: { span: 6 } },
+                                        [
+                                          _c(
+                                            "el-form-item",
+                                            {
                                               attrs: {
-                                                type: "textarea",
-                                                rows: 3,
-                                                placeholder:
-                                                  "Alergías del paciente",
-                                                "suffix-icon": "el-icon-edit"
-                                              },
-                                              model: {
-                                                value: _vm.form.allergies,
-                                                callback: function($$v) {
-                                                  _vm.$set(
-                                                    _vm.form,
-                                                    "allergies",
-                                                    $$v
-                                                  )
-                                                },
-                                                expression: "form.allergies"
+                                                label: "Tipo de sangre",
+                                                prop: "blood_group"
                                               }
-                                            })
-                                          ],
-                                          1
-                                        )
-                                      ],
-                                      1
-                                    )
-                                  ])
-                                ]
+                                            },
+                                            [
+                                              _c(
+                                                "el-select",
+                                                {
+                                                  attrs: {
+                                                    placeholder:
+                                                      "Selecciona el tipo de sangre"
+                                                  },
+                                                  model: {
+                                                    value: _vm.form.blood_group,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.form,
+                                                        "blood_group",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression:
+                                                      "form.blood_group"
+                                                  }
+                                                },
+                                                _vm._l(
+                                                  _vm.tableConfig[3].header
+                                                    .filter.options,
+                                                  function(item) {
+                                                    return _c("el-option", {
+                                                      key: item.value,
+                                                      attrs: {
+                                                        label: item.label,
+                                                        value: item.value
+                                                      }
+                                                    })
+                                                  }
+                                                ),
+                                                1
+                                              )
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "el-col",
+                                        { attrs: { span: 6 } },
+                                        [
+                                          _c(
+                                            "el-form-item",
+                                            {
+                                              attrs: { label: "Estado civil" }
+                                            },
+                                            [
+                                              _c(
+                                                "el-select",
+                                                {
+                                                  attrs: {
+                                                    placeholder:
+                                                      "Selecciona un estado civil"
+                                                  },
+                                                  model: {
+                                                    value:
+                                                      _vm.form.marital_status,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.form,
+                                                        "marital_status",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression:
+                                                      "form.marital_status"
+                                                  }
+                                                },
+                                                _vm._l(
+                                                  _vm.maritalStatus,
+                                                  function(item) {
+                                                    return _c("el-option", {
+                                                      key: item.value,
+                                                      attrs: {
+                                                        label: item.label,
+                                                        value: item.value
+                                                      }
+                                                    })
+                                                  }
+                                                ),
+                                                1
+                                              )
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "el-row",
+                                    [
+                                      _c(
+                                        "el-col",
+                                        { attrs: { span: 24 } },
+                                        [
+                                          _c(
+                                            "el-form-item",
+                                            { attrs: { label: "Alergías" } },
+                                            [
+                                              _c("el-input", {
+                                                attrs: {
+                                                  type: "textarea",
+                                                  rows: 3,
+                                                  placeholder:
+                                                    "Alergías del paciente",
+                                                  "prefix-icon": "el-icon-edit"
+                                                },
+                                                model: {
+                                                  value: _vm.form.allergies,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.form,
+                                                      "allergies",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression: "form.allergies"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "el-tab-pane",
+                                [
+                                  _c(
+                                    "span",
+                                    { attrs: { slot: "label" }, slot: "label" },
+                                    [
+                                      _c("i", {
+                                        staticClass: "fas fa-envelope-square"
+                                      }),
+                                      _vm._v(" Información de Contacto")
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "el-row",
+                                    [
+                                      _c(
+                                        "el-col",
+                                        { attrs: { span: 12 } },
+                                        [
+                                          _c(
+                                            "el-form-item",
+                                            {
+                                              attrs: {
+                                                label: "Telefono",
+                                                prop: "mobile"
+                                              }
+                                            },
+                                            [
+                                              [
+                                                _c("el-input", {
+                                                  attrs: {
+                                                    type: "text",
+                                                    placeholder:
+                                                      "Escribe el telefono celular",
+                                                    "prefix-icon":
+                                                      "fas fa-mobile-alt"
+                                                  },
+                                                  model: {
+                                                    value: _vm.form.mobile,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.form,
+                                                        "mobile",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression: "form.mobile"
+                                                  }
+                                                })
+                                              ]
+                                            ],
+                                            2
+                                          )
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "el-col",
+                                        { attrs: { span: 12 } },
+                                        [
+                                          _c(
+                                            "el-form-item",
+                                            {
+                                              attrs: {
+                                                label: "E-Mail",
+                                                prop: "email"
+                                              }
+                                            },
+                                            [
+                                              [
+                                                _c("el-input", {
+                                                  attrs: {
+                                                    type: "text",
+                                                    placeholder:
+                                                      "Escribe el correo del paciente",
+                                                    "prefix-icon": "fas fa-at"
+                                                  },
+                                                  model: {
+                                                    value: _vm.form.email,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.form,
+                                                        "email",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression: "form.email"
+                                                  }
+                                                })
+                                              ]
+                                            ],
+                                            2
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "el-tab-pane",
+                                [
+                                  _c(
+                                    "span",
+                                    { attrs: { slot: "label" }, slot: "label" },
+                                    [
+                                      _c("i", {
+                                        staticClass: "fas fa-map-marked-alt"
+                                      }),
+                                      _vm._v(" Dirección")
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "el-row",
+                                    [
+                                      _c(
+                                        "el-col",
+                                        { attrs: { span: 12 } },
+                                        [
+                                          _c(
+                                            "el-form-item",
+                                            {
+                                              attrs: {
+                                                label: "Calle",
+                                                prop: "street"
+                                              }
+                                            },
+                                            [
+                                              _c("el-input", {
+                                                attrs: {
+                                                  type: "text",
+                                                  placeholder:
+                                                    "Escribe el correo del paciente",
+                                                  "prefix-icon": "fas fa-road"
+                                                },
+                                                model: {
+                                                  value:
+                                                    _vm.form.address.street,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.form.address,
+                                                      "street",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "form.address.street"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "el-col",
+                                        { attrs: { span: 6 } },
+                                        [
+                                          _c(
+                                            "el-form-item",
+                                            { attrs: { label: "Numero" } },
+                                            [
+                                              _c("el-input", {
+                                                attrs: {
+                                                  type: "text",
+                                                  placeholder:
+                                                    "Escribe el correo del paciente",
+                                                  "prefix-icon":
+                                                    "fas fa-hashtag"
+                                                },
+                                                model: {
+                                                  value:
+                                                    _vm.form.address.number,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.form.address,
+                                                      "number",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "form.address.number"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "el-col",
+                                        { attrs: { span: 6 } },
+                                        [
+                                          _c(
+                                            "el-form-item",
+                                            {
+                                              attrs: {
+                                                label: "Numero Interior"
+                                              }
+                                            },
+                                            [
+                                              _c("el-input", {
+                                                attrs: {
+                                                  type: "text",
+                                                  placeholder:
+                                                    "Escribe el correo del paciente",
+                                                  "prefix-icon":
+                                                    "fas fa-hashtag"
+                                                },
+                                                model: {
+                                                  value:
+                                                    _vm.form.address
+                                                      .apartment_number,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.form.address,
+                                                      "apartment_number",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "form.address.apartment_number"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "el-row",
+                                    [
+                                      _c(
+                                        "el-col",
+                                        { attrs: { span: 12 } },
+                                        [
+                                          _c(
+                                            "el-form-item",
+                                            { attrs: { label: "Colonia" } },
+                                            [
+                                              _c("el-input", {
+                                                attrs: {
+                                                  type: "text",
+                                                  placeholder:
+                                                    "Escribe el correo del paciente",
+                                                  "prefix-icon": "fas fa-home"
+                                                },
+                                                model: {
+                                                  value:
+                                                    _vm.form.address
+                                                      .neighbourhood,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.form.address,
+                                                      "neighbourhood",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "form.address.neighbourhood"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "el-col",
+                                        { attrs: { span: 6 } },
+                                        [
+                                          _c(
+                                            "el-form-item",
+                                            { attrs: { label: "Ciudad" } },
+                                            [
+                                              _c("el-input", {
+                                                attrs: {
+                                                  type: "text",
+                                                  placeholder:
+                                                    "Escribe el correo del paciente",
+                                                  "prefix-icon": "fas fa-city"
+                                                },
+                                                model: {
+                                                  value: _vm.form.address.city,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.form.address,
+                                                      "city",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "form.address.city"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "el-col",
+                                        { attrs: { span: 6 } },
+                                        [
+                                          _c(
+                                            "el-form-item",
+                                            {
+                                              attrs: { label: "Codigo Postal" }
+                                            },
+                                            [
+                                              _c("el-input", {
+                                                attrs: {
+                                                  type: "text",
+                                                  placeholder:
+                                                    "Escribe el correo del paciente",
+                                                  "prefix-icon":
+                                                    "fas fa-hashtag"
+                                                },
+                                                model: {
+                                                  value:
+                                                    _vm.form.address.zip_code,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.form.address,
+                                                      "zip_code",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "form.address.zip_code"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "el-row",
+                                    [
+                                      _c(
+                                        "el-col",
+                                        { attrs: { span: 6 } },
+                                        [
+                                          _c(
+                                            "el-form-item",
+                                            { attrs: { label: "Estado" } },
+                                            [
+                                              _c(
+                                                "el-select",
+                                                {
+                                                  attrs: {
+                                                    placeholder:
+                                                      "Seleciona el sexo"
+                                                  },
+                                                  model: {
+                                                    value: _vm.form.gender,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.form,
+                                                        "gender",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression: "form.gender"
+                                                  }
+                                                },
+                                                _vm._l(
+                                                  _vm.mexicoStates,
+                                                  function(item) {
+                                                    return _c("el-option", {
+                                                      key: item.id,
+                                                      attrs: {
+                                                        label: item.label,
+                                                        value: item.id
+                                                      }
+                                                    })
+                                                  }
+                                                ),
+                                                1
+                                              )
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
                               )
                             ],
                             1
@@ -111300,6 +111855,25 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/ui/global/mixins/general.js":
+/*!**************************************************!*\
+  !*** ./resources/js/ui/global/mixins/general.js ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  computed: {
+    mexicoStates: function mexicoStates() {
+      return this.$store.state.general.mexicoStates;
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./resources/js/ui/global/modules/general/actions.js":
 /*!***********************************************************!*\
   !*** ./resources/js/ui/global/modules/general/actions.js ***!
@@ -111316,6 +111890,7 @@ __webpack_require__.r(__webpack_exports__);
   bacabFirstData: function bacabFirstData(context) {
     axios.get('/show').then(function (r) {
       context.commit('user', r.data.user);
+      context.commit('mexicoStates', r.data.mexicoStates);
     });
   }
 });
@@ -111381,6 +111956,9 @@ __webpack_require__.r(__webpack_exports__);
   },
   user: function user(state, payload) {
     state.user = payload;
+  },
+  mexicoStates: function mexicoStates(state, payload) {
+    state.mexicoStates = payload;
   }
 });
 
@@ -111456,7 +112034,8 @@ __webpack_require__.r(__webpack_exports__);
   bacabUIEvents: {
     bacabAsideOpen: false,
     bacabNewNotification: false
-  }
+  },
+  mexicoStates: []
 });
 
 /***/ }),
@@ -111752,14 +112331,15 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
 /*!***************************************************!*\
   !*** ./resources/js/views/EHR/Patients/index.vue ***!
   \***************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _index_vue_vue_type_template_id_4f54fe70_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./index.vue?vue&type=template&id=4f54fe70&scoped=true& */ "./resources/js/views/EHR/Patients/index.vue?vue&type=template&id=4f54fe70&scoped=true&");
 /* harmony import */ var _index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./index.vue?vue&type=script&lang=js& */ "./resources/js/views/EHR/Patients/index.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -111789,7 +112369,7 @@ component.options.__file = "resources/js/views/EHR/Patients/index.vue"
 /*!****************************************************************************!*\
   !*** ./resources/js/views/EHR/Patients/index.vue?vue&type=script&lang=js& ***!
   \****************************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

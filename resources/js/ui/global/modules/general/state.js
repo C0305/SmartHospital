@@ -73,5 +73,6 @@ export default {
     bacabUIEvents: {
         bacabAsideOpen: false,
         bacabNewNotification: false
-    }
+    },
+    mexicoStates: []
 }

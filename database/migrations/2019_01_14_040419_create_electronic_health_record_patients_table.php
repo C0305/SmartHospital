@@ -25,7 +25,7 @@ class CreateElectronicHealthRecordPatientsTable extends Migration
             $table->string('mobile')->nullable(true);
             $table->string('marital_status')->nullable(true);
             $table->string('blood_group')->nullable(true);
-            $table->string('address')->nullable(true);
+            $table->integer('address')->nullable(true);
             $table->integer('hospitals_id')->nullable(true);
             $table->integer('created_user')->nullable(true);
             $table->timestampTz('created_at')->useCurrent();
