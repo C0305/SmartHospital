@@ -3928,6 +3928,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "bacabAside",
@@ -3937,6 +3942,11 @@ __webpack_require__.r(__webpack_exports__);
     saveButtonFunction: Function,
     name: String,
     closeFunction: Function
+  },
+  data: function data() {
+    return {
+      loading: false
+    };
   },
   created: function created() {
     this.$store.dispatch('general/bacabAsideOpenClose', true);
@@ -3961,19 +3971,25 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     saveAndClose: function saveAndClose() {
-      try {
-        this.saveButtonFunction();
+      var _this2 = this;
 
-        if (this.closeFunction != null) {
-          this.closeFunction();
+      this.loading = true;
+      this.saveButtonFunction().then(function () {
+        if (_this2.closeFunction != null) {
+          _this2.closeFunction();
         }
 
-        this.closeAside();
-      } catch (Exception) {
+        _this2.loading = false;
+
+        _this2.closeAside();
+      }).catch(function () {
         console.log('Error');
         console.log(Exception);
-        this.$message.error('Ocurrio un error en el formulario: ' + this.name);
-      }
+
+        _this2.$message.error('Ocurrio un error en el formulario: ' + _this2.name);
+
+        _this2.loading = false;
+      });
     }
   }
 });
@@ -4496,7 +4512,8 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
     title: String,
     tableConfig: Array,
     remoteUrl: String,
-    dataManipulationMethod: Function
+    dataManipulationMethod: Function,
+    updateValue: Number
   },
   data: function data() {
     return {
@@ -4520,6 +4537,11 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
   },
   mounted: function mounted() {
     this.queryMethod();
+  },
+  watch: {
+    updateValue: function updateValue() {
+      this.queryMethod();
+    }
   },
 
   /*errorCaptured (err, vm, info) {
@@ -4683,6 +4705,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ui_components_bacabAside__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../ui/components/bacabAside */ "./resources/js/ui/components/bacabAside.vue");
 /* harmony import */ var _ui_global_mixins_aside__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../ui/global/mixins/aside */ "./resources/js/ui/global/mixins/aside.js");
 /* harmony import */ var _ui_global_mixins_general__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../ui/global/mixins/general */ "./resources/js/ui/global/mixins/general.js");
+/* harmony import */ var _ui_global_mixins_tables__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../ui/global/mixins/tables */ "./resources/js/ui/global/mixins/tables.js");
+/* harmony import */ var _ui_global_mixins_tablesMethods__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../ui/global/mixins/tablesMethods */ "./resources/js/ui/global/mixins/tablesMethods.js");
 //
 //
 //
@@ -4966,22 +4990,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
+
+
 
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "index",
-  mixins: [_ui_global_mixins_aside__WEBPACK_IMPORTED_MODULE_2__["default"], _ui_global_mixins_general__WEBPACK_IMPORTED_MODULE_3__["default"]],
+  mixins: [_ui_global_mixins_aside__WEBPACK_IMPORTED_MODULE_2__["default"], _ui_global_mixins_general__WEBPACK_IMPORTED_MODULE_3__["default"], _ui_global_mixins_tables__WEBPACK_IMPORTED_MODULE_4__["default"], _ui_global_mixins_tablesMethods__WEBPACK_IMPORTED_MODULE_5__["default"]],
   components: {
     BacabAside: _ui_components_bacabAside__WEBPACK_IMPORTED_MODULE_1__["default"],
     BacabTables: _ui_components_bacabTables__WEBPACK_IMPORTED_MODULE_0__["default"]
@@ -5149,7 +5166,9 @@ __webpack_require__.r(__webpack_exports__);
     openModal: function openModal() {
       this.modalOpen ? this.modalOpen = false : this.modalOpen = true;
     },
-    saveForm: function saveForm() {}
+    saveForm: function saveForm() {
+      this.updatePatients();
+    }
   }
 });
 
@@ -92544,16 +92563,33 @@ var render = function() {
         _c("p", [_vm._v(_vm._s(_vm.name))])
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "lateral-aside__aside-content " }, [
-        _c("div", { staticClass: "lateral-aside__content-panel" }, [
-          _c(
-            "div",
-            { staticClass: "lateral-aside__content-panel-body" },
-            [_vm._t("content")],
-            2
-          )
-        ])
-      ]),
+      _c(
+        "div",
+        {
+          directives: [
+            {
+              name: "loading",
+              rawName: "v-loading",
+              value: _vm.loading,
+              expression: "loading"
+            }
+          ],
+          staticClass: "lateral-aside__aside-content ",
+          attrs: {
+            "element-loading-text": "Espera, los datos estan cargando..."
+          }
+        },
+        [
+          _c("div", { staticClass: "lateral-aside__content-panel" }, [
+            _c(
+              "div",
+              { staticClass: "lateral-aside__content-panel-body" },
+              [_vm._t("content")],
+              2
+            )
+          ])
+        ]
+      ),
       _vm._v(" "),
       _c(
         "div",
@@ -92563,14 +92599,39 @@ var render = function() {
             ? [_vm._t("buttons")]
             : _vm.saveButton === true
               ? [
-                  _c(
-                    "el-button",
-                    {
-                      attrs: { size: "mini", icon: "fas fa-save", round: "" },
-                      on: { click: _vm.saveAndClose }
-                    },
-                    [_vm._v("\n                    Guardar\n                ")]
-                  )
+                  _vm.loading === false
+                    ? _c(
+                        "el-button",
+                        {
+                          attrs: {
+                            size: "mini",
+                            icon: "fas fa-save",
+                            round: ""
+                          },
+                          on: { click: _vm.saveAndClose }
+                        },
+                        [
+                          _vm._v(
+                            "\n                    Guardar\n                "
+                          )
+                        ]
+                      )
+                    : _c(
+                        "el-button",
+                        {
+                          attrs: {
+                            size: "mini",
+                            icon: "fas fa-save",
+                            disabled: "",
+                            round: ""
+                          }
+                        },
+                        [
+                          _vm._v(
+                            "\n                    Guardar\n                "
+                          )
+                        ]
+                      )
                 ]
               : _vm._e()
         ],
@@ -93410,28 +93471,14 @@ var render = function() {
       _vm.asideOpenClose === true
         ? _c(
             "bacab-aside",
-            { attrs: { name: _vm.bacabAsideText } },
+            {
+              attrs: {
+                "save-button": "",
+                "save-button-function": _vm.saveForm,
+                name: _vm.bacabAsideText
+              }
+            },
             [
-              _c(
-                "template",
-                { slot: "buttons" },
-                [
-                  _c(
-                    "el-button",
-                    {
-                      attrs: { size: "mini", icon: "fas fa-save", round: "" },
-                      on: {
-                        click: function($event) {
-                          _vm.saveForm()
-                        }
-                      }
-                    },
-                    [_vm._v("\n                Save\n            ")]
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
               _c("template", { slot: "content" }, [
                 _c("div", { staticClass: "box" }, [
                   _c("div", { staticClass: "box__header" }, [
@@ -94327,6 +94374,7 @@ var render = function() {
             {
               attrs: {
                 title: "Listado de Pacientes",
+                "update-value": _vm.patients,
                 "remote-url": "/ehr/patients/index/",
                 "table-config": _vm.tableConfig
               }
@@ -111874,6 +111922,44 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/ui/global/mixins/tables.js":
+/*!*************************************************!*\
+  !*** ./resources/js/ui/global/mixins/tables.js ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  computed: {
+    patients: function patients() {
+      return this.$store.state.general.bacabUIEvents.reloadValue.patients;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/ui/global/mixins/tablesMethods.js":
+/*!********************************************************!*\
+  !*** ./resources/js/ui/global/mixins/tablesMethods.js ***!
+  \********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  methods: {
+    updatePatients: function updatePatients() {
+      this.$store.dispatch('general/bacabUpdateValue', 'patients');
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./resources/js/ui/global/modules/general/actions.js":
 /*!***********************************************************!*\
   !*** ./resources/js/ui/global/modules/general/actions.js ***!
@@ -111892,6 +111978,9 @@ __webpack_require__.r(__webpack_exports__);
       context.commit('user', r.data.user);
       context.commit('mexicoStates', r.data.mexicoStates);
     });
+  },
+  bacabUpdateValue: function bacabUpdateValue(context, payload) {
+    context.commit('bacabUpdateValue', payload);
   }
 });
 
@@ -111959,6 +112048,13 @@ __webpack_require__.r(__webpack_exports__);
   },
   mexicoStates: function mexicoStates(state, payload) {
     state.mexicoStates = payload;
+  },
+  bacabUpdateValue: function bacabUpdateValue(state, payload) {
+    switch (payload) {
+      case 'patients':
+        state.bacabUIEvents.reloadValue.patients++;
+        break;
+    }
   }
 });
 
@@ -112033,7 +112129,10 @@ __webpack_require__.r(__webpack_exports__);
   bacabNotifications: [],
   bacabUIEvents: {
     bacabAsideOpen: false,
-    bacabNewNotification: false
+    bacabNewNotification: false,
+    reloadValue: {
+      patients: 0
+    }
   },
   mexicoStates: []
 });
@@ -112331,15 +112430,14 @@ vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__
 /*!***************************************************!*\
   !*** ./resources/js/views/EHR/Patients/index.vue ***!
   \***************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _index_vue_vue_type_template_id_4f54fe70_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./index.vue?vue&type=template&id=4f54fe70&scoped=true& */ "./resources/js/views/EHR/Patients/index.vue?vue&type=template&id=4f54fe70&scoped=true&");
 /* harmony import */ var _index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./index.vue?vue&type=script&lang=js& */ "./resources/js/views/EHR/Patients/index.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _index_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -112369,7 +112467,7 @@ component.options.__file = "resources/js/views/EHR/Patients/index.vue"
 /*!****************************************************************************!*\
   !*** ./resources/js/views/EHR/Patients/index.vue?vue&type=script&lang=js& ***!
   \****************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

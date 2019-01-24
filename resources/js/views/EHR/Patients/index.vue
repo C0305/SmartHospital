@@ -1,16 +1,7 @@
 <template>
     <section>
         <!--Formulario-->
-        <bacab-aside  :name="bacabAsideText" v-if="asideOpenClose === true">
-            <template slot="buttons">
-                <el-button
-                        size="mini"
-                        icon="fas fa-save"
-                        @click="saveForm()"
-                        round>
-                    Save
-                </el-button>
-            </template>
+        <bacab-aside  save-button :save-button-function="saveForm" :name="bacabAsideText" v-if="asideOpenClose === true">
             <template slot="content">
                 <div class="box">
                     <div class="box__header">
@@ -263,7 +254,7 @@
         </div>
 
         <div class="main-panel">
-            <bacab-tables title="Listado de Pacientes" remote-url="/ehr/patients/index/" :table-config="tableConfig">
+            <bacab-tables title="Listado de Pacientes" :update-value="patients" remote-url="/ehr/patients/index/" :table-config="tableConfig">
                 <template slot="actions">
                     <div style="rigth: 0">
                         <el-button
@@ -295,9 +286,11 @@
     import BacabAside from "../../../ui/components/bacabAside";
     import aside from "../../../ui/global/mixins/aside";
     import general from "../../../ui/global/mixins/general";
+    import tables from "../../../ui/global/mixins/tables";
+    import tablesMethod from "../../../ui/global/mixins/tablesMethods";
     export default {
         name: "index",
-        mixins: [ aside, general ],
+        mixins: [ aside, general, tables, tablesMethod],
         components: { BacabAside, BacabTables },
         data() {
             return {
@@ -484,7 +477,7 @@
 
             },
             saveForm(){
-
+                this.updatePatients();
             }
         }
     }

@@ -8,5 +8,8 @@ export default {
             context.commit('user', r.data.user);
             context.commit('mexicoStates', r.data.mexicoStates);
         });
+    },
+    bacabUpdateValue(context, payload){
+        context.commit('bacabUpdateValue',payload);
     }
 }

@@ -5,7 +5,9 @@
                 <span type="button" class="fas fa-times-circle" @click="close"></span>
                 <p>{{ name }}</p>
             </div>
-            <div class="lateral-aside__aside-content ">
+            <div     v-loading="loading"
+                     element-loading-text="Espera, los datos estan cargando..."
+                     class="lateral-aside__aside-content ">
                 <div class="lateral-aside__content-panel">
                     <div class="lateral-aside__content-panel-body">
                         <slot name="content"></slot>
@@ -17,7 +19,10 @@
                     <slot name="buttons"></slot>
                 </template>
                 <template v-else-if="saveButton === true" >
-                    <el-button size="mini" icon="fas fa-save" @click="saveAndClose" round>
+                    <el-button v-if="loading === false" size="mini" icon="fas fa-save" @click="saveAndClose" round>
+                        Guardar
+                    </el-button>
+                    <el-button v-else size="mini" icon="fas fa-save" disabled round>
                         Guardar
                     </el-button>
                 </template>
@@ -36,6 +41,11 @@
             saveButtonFunction: Function,
             name: String,
             closeFunction: Function,
+        },
+        data(){
+            return {
+                loading: false,
+            }
         },
         created(){
             this.$store.dispatch('general/bacabAsideOpenClose', true)
@@ -58,17 +68,19 @@
 
             },
             saveAndClose(){
-                try{
-                    this.saveButtonFunction();
+                this.loading = true;
+                this.saveButtonFunction().then( () => {
                     if(this.closeFunction != null){
                         this.closeFunction();
                     }
+                    this.loading = false;
                     this.closeAside()
-                } catch (Exception) {
-                    console.log('Error')
-                    console.log(Exception)
+                }).catch(() => {
+                    console.log('Error');
+                    console.log(Exception);
                     this.$message.error('Ocurrio un error en el formulario: '+this.name);
-                }
+                    this.loading = false;
+                });
 
             }
         }

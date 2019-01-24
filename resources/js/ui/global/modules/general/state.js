@@ -72,7 +72,10 @@ export default {
     bacabNotifications: [],
     bacabUIEvents: {
         bacabAsideOpen: false,
-        bacabNewNotification: false
+        bacabNewNotification: false,
+        reloadValue: {
+            patients: 0
+        }
     },
     mexicoStates: []
 }

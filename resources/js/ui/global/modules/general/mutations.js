@@ -7,5 +7,12 @@ export default {
     },
     mexicoStates(state, payload) {
         state.mexicoStates = payload;
+    },
+    bacabUpdateValue(state, payload){
+        switch(payload){
+            case 'patients':
+                state.bacabUIEvents.reloadValue.patients++;
+                break;
+        }
     }
 }

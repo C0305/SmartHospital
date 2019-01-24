@@ -147,7 +147,8 @@
             title: String,
             tableConfig: Array,
             remoteUrl: String,
-            dataManipulationMethod: Function
+            dataManipulationMethod: Function,
+            updateValue: Number
         },
         data(){
             return {
@@ -171,6 +172,11 @@
         },
         mounted(){
             this.queryMethod();
+        },
+        watch: {
+            updateValue(){
+                this.queryMethod();
+            }
         },
         /*errorCaptured (err, vm, info) {
             this.error = `${err.stack}\n\nfound in ${info} of component`
