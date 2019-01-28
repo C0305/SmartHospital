@@ -69,15 +69,16 @@
             },
             saveAndClose(){
                 this.loading = true;
-                this.saveButtonFunction().then( () => {
+                this.saveButtonFunction().then( (resolve) => {
+                    console.log('then');
                     if(this.closeFunction != null){
                         this.closeFunction();
                     }
                     this.loading = false;
                     this.closeAside()
-                }).catch(() => {
+                }).catch((reject) => {
                     console.log('Error');
-                    console.log(Exception);
+                    console.log(reject);
                     this.$message.error('Ocurrio un error en el formulario: '+this.name);
                     this.loading = false;
                 });
