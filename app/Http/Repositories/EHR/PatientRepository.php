@@ -11,6 +11,7 @@ namespace SmartHospital\Http\Repositories\EHR;
 
 use Carbon\Carbon;
 use SmartHospital\Models\EHR\Patient\Patient;
+use SmartHospital\Models\EHR\Patient\PatientAddress;
 
 class PatientRepository
 {
@@ -41,5 +42,15 @@ class PatientRepository
             }
         }
         return $model;
+    }
+    public function savePatient()
+    {
+        $patient = $this->request->all();
+        $address = $patient['address'];
+        unset($patient['address']);
+        $patientAddressModel = PatientAddress::updateOrCreate(['id' => $address['id']],$address);
+        $patientModel['address_id'] = $patientAddressModel->id;
+        $patientModel = Patient::updateOrCreate(['id' => $patient['id']],$patient);
+        return $patientModel;
     }
 }

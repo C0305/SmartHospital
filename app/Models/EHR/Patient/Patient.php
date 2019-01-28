@@ -22,7 +22,7 @@ class Patient extends Model
         'marital_status',
         'mobile',
         'email',
-        'address',
+        'address_id',
         'allergies',
         'middle_name',
         'hospitals_id',

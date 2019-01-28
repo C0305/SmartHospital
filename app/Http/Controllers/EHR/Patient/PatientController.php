@@ -117,7 +117,8 @@ class PatientController extends Controller
         }
     }
 
-    private function savePatient(){
+    private function savePatient()
+    {
         DB::beginTransaction();
         try {
             $model = $this->repository->savePatient();
