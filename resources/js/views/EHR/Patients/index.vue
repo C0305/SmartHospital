@@ -55,7 +55,7 @@
                                         <el-row>
                                             <el-col :span="6">
                                                 <el-form-item label="Sexo" prop="gender">
-                                                    <el-select v-model="form.gender" placeholder="Seleciona el sexo">
+                                                    <el-select filterable v-model="form.gender" placeholder="Seleciona el sexo">
                                                         <el-option
                                                                 v-for="item in tableConfig[1].header.filter.options"
                                                                 :key="item.value"
@@ -79,7 +79,7 @@
                                             </el-col>
                                             <el-col :span="6">
                                                 <el-form-item label="Tipo de sangre" prop="blood_group">
-                                                    <el-select v-model="form.blood_group" placeholder="Selecciona el tipo de sangre">
+                                                    <el-select filterable v-model="form.blood_group" placeholder="Selecciona el tipo de sangre">
                                                         <el-option
                                                                 v-for="item in tableConfig[3].header.filter.options"
                                                                 :key="item.value"
@@ -91,7 +91,7 @@
                                             </el-col>
                                             <el-col :span="6">
                                                 <el-form-item label="Estado civil">
-                                                    <el-select v-model="form.marital_status" placeholder="Selecciona un estado civil">
+                                                    <el-select filterable v-model="form.marital_status" placeholder="Selecciona un estado civil">
                                                         <el-option
                                                                 v-for="item in maritalStatus"
                                                                 :key="item.value"
@@ -220,7 +220,7 @@
                                     <el-row>
                                         <el-col :span="6">
                                             <el-form-item label="Estado" >
-                                                <el-select v-model="form.gender" placeholder="Seleciona el sexo">
+                                                <el-select filterable v-model="form.gender" placeholder="Seleciona el sexo">
                                                     <el-option
                                                             v-for="item in mexicoStates"
                                                             :key="item.id"
@@ -288,6 +288,8 @@
     import general from "../../../ui/global/mixins/general";
     import tables from "../../../ui/global/mixins/tables";
     import tablesMethod from "../../../ui/global/mixins/tablesMethods";
+    import cloneDeep from 'lodash';
+    import moment from 'moment';
     export default {
         name: "index",
         mixins: [ aside, general, tables, tablesMethod],
@@ -295,6 +297,7 @@
         data() {
             return {
                 form: {
+                    id: 'nc17',
                     name: '',
                     last_name: '',
                     mother_last_name: '',
@@ -306,6 +309,7 @@
                     mobile: '',
                     email: '',
                     address: {
+                        id: 'nc17',
                         street: '',
                         number: '',
                         apartment_number: '',
@@ -476,8 +480,28 @@
                     this.modalOpen = true;
 
             },
+            checkBeforeSend(){
+                let data = cloneDeep(this.form);
+                data.birthday = moment(data.birthday).utc().format('YYYY-MM-DD');
+                return data;
+            },
             saveForm(){
-                this.updatePatients();
+                let data = this.checkBeforeSend();
+                console.log(data);
+                return new Promise((resolve, reject) => {
+                    let url = null;
+                    if(this.form.id === 'nc17'){
+                        url = '/ehr/patients';
+                    } else {
+                        url = '/ehr/patients/'+this.form.id;
+                    }
+                    axios.post(url, data).then((response) => {
+                        resolve(response);
+                        this.updatePatients();
+                    }).catch((response) => {
+                        reject(response);
+                    })
+                })
             }
         }
     }
