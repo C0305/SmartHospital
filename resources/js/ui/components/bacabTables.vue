@@ -18,7 +18,7 @@
         <div class="box__body">
             <el-table
                     :data="dataArray"
-                    v-loading="loadingData"
+                    v-loading="loading"
                     highlight-current-row
                     :max-height="tableHeight"
                     border>
@@ -102,7 +102,6 @@
                         </template>
 
                         <!--Body Slot-->
-
                         <template slot-scope="props" v-if="column.body != null && column.body.slot != null && column.body.type === 'slot'">
                                 <slot v-bind="props" :name="column.body.slot "></slot>
                         </template>
@@ -119,7 +118,7 @@
                             :fixed="column.header.fixed">
 
                         <!--Header Slot-->
-                        <template slot="header" slot-scope="scope">
+                        <template slot="header" props>
                             <div class="bacab-table__header-container" style="display: grid">
                                 <label class="bacab-table__header-container__item">{{ column.header.name }}</label>
                             </div>
@@ -164,7 +163,7 @@
                 pageSizes: [25, 50, 75, 100],
                 totalRecords: null,
                 from: 1,
-                loadingData: false
+                loading: false
             }
         },
         created(){
@@ -234,6 +233,7 @@
                 let now = new Date();
                 if (now - this.lastSearch > 900) {
                     this.lastSearch = now;
+                    this.loading = true;
                     let filters = cloneDeep(this.filters);
                     filters = qs.stringify(filters);
                     let url = this.remoteUrl + '?page=' + this.currentPage;
@@ -242,13 +242,16 @@
                             this.from = response.data.from;
                             this.totalRecords = response.data.total;
                             this.dataArray = this.dataManipulationMethod(response.data.data);
+                            this.loading = false;
                         } else {
                             this.from = response.data.from;
                             this.totalRecords = response.data.total;
                             this.dataArray = response.data.data;
+                            this.loading = false;
                         }
                     }).catch(response => {
                         this.$message.error('Error al cargar los datos');
+                        this.loading = false;
                         console.error('ERROR ' + response);
                     });
                 }

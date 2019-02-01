@@ -23,7 +23,7 @@ class PatientRepository
     }
 
     public function getPatientsIndexTable(){
-        $model = Patient::select('*');
+        $model = Patient::select('*')->with('address');
         $notArray = array('pageSize', 'page');
         foreach ($this->request->all() as $key => $value) {
             if(!in_array($key,$notArray) && !empty($value)){

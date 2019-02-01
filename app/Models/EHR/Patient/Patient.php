@@ -2,6 +2,7 @@
 
 namespace SmartHospital\Models\EHR\Patient;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use SmartHospital\Traits\Models\FullTextSearch;
@@ -15,7 +16,7 @@ class Patient extends Model
     protected $fillable = [
         'name',
         'gender',
-        'birthday',
+        'birthdate',
         'last_name',
         'mother_last_name',
         'blood_group',
@@ -62,6 +63,9 @@ class Patient extends Model
      */
     public function getAge()
     {
-        return Carbon::parse($this->attributes['birthday'])->age;
+        return Carbon::parse($this->attributes['birthdate'])->age;
+    }
+    public function address() {
+        $this->hasOne('SmartHospital\Models\EHR\Patient\PatientAddress', 'address_id', 'id');
     }
 }

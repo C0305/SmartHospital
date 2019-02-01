@@ -255,13 +255,13 @@
 
         <div class="main-panel">
             <bacab-tables title="Listado de Pacientes" :update-value="patients" remote-url="/ehr/patients/index/" :table-config="tableConfig">
-                <template slot="actions">
+                <template slot="actionSlot"  slot-scope="obj">
                     <div style="rigth: 0">
                         <el-button
                                 size="small"
                                 round
                                 type="info"
-                                @click="test()"
+                                @click="editPatient(obj.row)"
                                 icon="fas fa-edit">
                             <b>Editar</b>
                         </el-button>
@@ -269,11 +269,23 @@
                                 size="small"
                                 round
                                 type="danger"
-                                @click="test()"
+                                @click="deletePatient(obj.row)"
                                 icon="fas fa-trash-alt">
                             <b>Borrar</b>
                         </el-button>
                     </div>
+                </template>
+                <template slot="nameSlot"  slot-scope="obj">
+                    {{ obj.row.name+' '+obj.row.last_name+' '+obj.row.mother_last_name }}
+                </template>
+                <template slot="ageSlot"  slot-scope="obj">
+                    <bacab-table-age :birthdate="obj.row.birthdate"/>
+                </template>
+                <template slot="sexSlot"  slot-scope="obj">
+                    <bacab-table-sex :sex="obj.row.gender"/>
+                </template>
+                <template slot="bloodSlot"  slot-scope="obj">
+                    {{ obj.row.blood_group }}
                 </template>
             </bacab-tables>
         </div>
@@ -290,10 +302,12 @@
     import tablesMethod from "../../../ui/global/mixins/tablesMethods";
     import cloneDeep from 'lodash';
     import moment from 'moment';
+    import BacabTableAge from "../../../ui/global/accessors/bacabTableAge";
+    import BacabTableSex from "../../../ui/global/accessors/bacabTableSex";
     export default {
         name: "index",
         mixins: [ aside, general, tables, tablesMethod],
-        components: { BacabAside, BacabTables },
+        components: {BacabTableSex, BacabTableAge, BacabAside, BacabTables },
         data() {
             return {
                 form: {
@@ -376,6 +390,10 @@
                                 type: 'input'
                             }
                         },
+                        body:{
+                            type: 'slot',
+                            slot: 'nameSlot'
+                        }
 
 
                     },
@@ -388,30 +406,38 @@
                                 type: 'select',
                                 options: [
                                     {
-                                        value: 0,
-                                        label: 'Hombre',
+                                        value: 'Masculino',
+                                        label: 'Masculino',
                                     },
                                     {
-                                        value: 1,
-                                        label: 'Mujer',
+                                        value: 'Femenino',
+                                        label: 'Femenino',
                                     },
                                     {
-                                        value: 2,
+                                        value: 'Otro',
                                         label: 'Otro',
                                     },
 
                                 ]
                             }
+                        },
+                        body:{
+                            type: 'slot',
+                            slot: 'sexSlot'
                         }
                     },
                     {
                         header: {
                             name: 'Edad',
-                            prop: 'birthday',
+                            prop: 'getAge',
                             width: '300px',
                             filter: {
                                 type: 'input'
                             }
+                        },
+                        body:{
+                            type: 'slot',
+                            slot: 'ageSlot'
                         }
                     },
                     {
@@ -458,6 +484,10 @@
 
                                 ]
                             }
+                        },
+                        body:{
+                            type: 'slot',
+                            slot: 'bloodSlot'
                         }
                     },
                     {
@@ -467,27 +497,30 @@
                         },
                         body:{
                             type: 'slot',
-                            slot: 'actions'
+                            slot: 'actionSlot'
                         }
+
                     }
                 ]
             }
         },
         methods: {
+            editPatient(patient){
+                console.log('si')
+                this.form = cloneDeep(patient);
+                this.openAside();
+            },
+            deletePatient(patient){
+
+            },
+
+
             openModal(){
                 this.modalOpen ?
                     this.modalOpen = false :
                     this.modalOpen = true;
-
-            },
-            checkBeforeSend(){
-                let data = cloneDeep(this.form);
-                data.birthday = moment(data.birthday).utc().format('YYYY-MM-DD');
-                return data;
             },
             saveForm(){
-                let data = this.checkBeforeSend();
-                console.log(data);
                 return new Promise((resolve, reject) => {
                     let url = null;
                     if(this.form.id === 'nc17'){
@@ -495,7 +528,8 @@
                     } else {
                         url = '/ehr/patients/'+this.form.id;
                     }
-                    axios.post(url, data).then((response) => {
+                    this.form.birthday = this.form.birthday.toISOString().slice(0, 19).replace('T', ' ');
+                    axios.post(url, this.form).then((response) => {
                         resolve(response);
                         this.updatePatients();
                     }).catch((response) => {
