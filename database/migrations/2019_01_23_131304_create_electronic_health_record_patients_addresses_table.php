@@ -21,11 +21,13 @@ class CreateElectronicHealthRecordPatientsAddressesTable extends Migration
             $table->string('neighbourhood', 256)->nullable(true);
             $table->string('city', 256)->nullable(true);
             $table->string('zip_code', 10)->nullable(true);
-            $table->string('state', 10)->nullable(true);
-            $table->timestamps();
+            $table->integer('state')->nullable(true);
             $table->integer('created_user')->nullable(true);
             $table->integer('updated_user')->nullable(true);
             $table->integer('deleted_user')->nullable(true);
+            $table->timestampTz('created_at')->useCurrent();
+            $table->timestampTz('updated_at')->nullable(true);
+            $table->timestampTz('deleted_at')->nullable(true);
         });
     }
 

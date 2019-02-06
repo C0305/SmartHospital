@@ -76,7 +76,7 @@
                     }
                     this.loading = false;
                     this.closeAside()
-                }).catch((reject) => {w
+                }).catch((reject) => {
                     console.log('Error');
                     console.log(reject);
                     this.$message.error('Ocurrio un error en el formulario: '+this.name);

@@ -24,12 +24,12 @@ class PatientRepository
 
     public function getPatientsIndexTable(){
         $model = Patient::select('*')->with('address');
-        $notArray = array('pageSize', 'page');
+        $notArray = array('pageSize', 'page', 'udefined');
         foreach ($this->request->all() as $key => $value) {
             if(!in_array($key,$notArray) && !empty($value)){
-                if($key === 'name'){
+                if($key === 'fullname'){
                     $model->search($value);
-                } else if($key === 'age') {
+                } else if($key === 'getAge') {
                     $carbon = Carbon::now()->startOfYear();
                     $from = $carbon->copy()->subYears(intval($value));
                     $to = $from->copy()->endOfYear();
@@ -47,10 +47,14 @@ class PatientRepository
     {
         $patient = $this->request->all();
         $address = $patient['address'];
+        $birthday = new Carbon($patient['birthday']);
+        $patient['birthday'] = $birthday->format('Y-m-d');
         unset($patient['address']);
         $patientAddressModel = PatientAddress::updateOrCreate(['id' => $address['id']],$address);
-        $patientModel['address_id'] = $patientAddressModel->id;
+        $patient['address_id'] = $patientAddressModel->id;
         $patientModel = Patient::updateOrCreate(['id' => $patient['id']],$patient);
+        $patientModel->birthday = $birthday->format('Y-m-d');
+        $patientModel->save();
         return $patientModel;
     }
 }

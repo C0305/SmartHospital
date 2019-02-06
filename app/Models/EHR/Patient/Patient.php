@@ -22,6 +22,7 @@ class Patient extends Model
         'blood_group',
         'marital_status',
         'mobile',
+        'state',
         'email',
         'address_id',
         'allergies',
@@ -66,6 +67,6 @@ class Patient extends Model
         return Carbon::parse($this->attributes['birthdate'])->age;
     }
     public function address() {
-        $this->hasOne('SmartHospital\Models\EHR\Patient\PatientAddress', 'address_id', 'id');
+        return $this->hasOne('SmartHospital\Models\EHR\Patient\PatientAddress', 'id', 'address_id');
     }
 }

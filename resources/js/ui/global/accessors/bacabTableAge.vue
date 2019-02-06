@@ -17,7 +17,7 @@
         methods: {
             getAge(){
                 let birth = moment(this.birthdate);
-                return '   '+birth.diff(moment(new Date),'years')+' años';
+                return '   '+Math.abs(birth.diff(moment(new Date),'years'))+' años';
             }
         }
     }

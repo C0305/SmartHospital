@@ -149,8 +149,7 @@
                                     <span slot="label"><i class="fas fa-map-marked-alt"></i> Dirección</span>
                                     <el-row>
                                         <el-col :span="12">
-                                            <el-form-item label="Calle" prop="street"
-                                                          >
+                                            <el-form-item label="Calle" prop="street">
                                                 <el-input v-model="form.address.street"
                                                           type="text"
                                                           placeholder="Escribe el correo del paciente"
@@ -220,7 +219,7 @@
                                     <el-row>
                                         <el-col :span="6">
                                             <el-form-item label="Estado" >
-                                                <el-select filterable v-model="form.gender" placeholder="Seleciona el sexo">
+                                                <el-select filterable v-model="form.address.state" placeholder="Seleciona el sexo">
                                                     <el-option
                                                             v-for="item in mexicoStates"
                                                             :key="item.id"
@@ -246,7 +245,7 @@
                 <el-button
                     size="small"
                     round
-                    @click="openAside"
+                    @click="newPatient()"
                     icon="glyphicon glyphicon-floppy-open">
                     <b>Ingresar Paciente</b>
                 </el-button>
@@ -276,10 +275,10 @@
                     </div>
                 </template>
                 <template slot="nameSlot"  slot-scope="obj">
-                    {{ obj.row.name+' '+obj.row.last_name+' '+obj.row.mother_last_name }}
+                    {{ obj.row.name+' '+obj.row.last_name+' '+(obj.row.mother_last_name?  obj.row.mother_last_name : '')}}
                 </template>
                 <template slot="ageSlot"  slot-scope="obj">
-                    <bacab-table-age :birthdate="obj.row.birthdate"/>
+                    <bacab-table-age :birthdate="obj.row.birthday"/>
                 </template>
                 <template slot="sexSlot"  slot-scope="obj">
                     <bacab-table-sex :sex="obj.row.gender"/>
@@ -330,6 +329,7 @@
                         neighbourhood: '',
                         city: '',
                         zip_code: '',
+                        state: '',
                     }
                 },
                 rules: {
@@ -412,6 +412,10 @@
                                     {
                                         value: 'Femenino',
                                         label: 'Femenino',
+                                    },
+                                    {
+                                        value: 'Sin especificar',
+                                        label: 'Sin especificar',
                                     },
                                     {
                                         value: 'Otro',
@@ -505,9 +509,33 @@
             }
         },
         methods: {
+            newPatient() {
+                this.form = {
+                    id: 'nc17',
+                    name: '',
+                    last_name: '',
+                    mother_last_name: '',
+                    gender: '',
+                    birthday: '',
+                    blood_group: '',
+                    marital_status: '',
+                    allergies: '',
+                    mobile: '',
+                    email: '',
+                    address: {
+                        id: 'nc17',
+                        street: '',
+                        number: '',
+                        apartment_number: '',
+                        neighbourhood: '',
+                        city: '',
+                        zip_code: '',
+                    }
+                }
+                this.openAside()
+            },
             editPatient(patient){
-                console.log('si')
-                this.form = cloneDeep(patient);
+                this.form = patient;
                 this.openAside();
             },
             deletePatient(patient){
@@ -523,18 +551,30 @@
             saveForm(){
                 return new Promise((resolve, reject) => {
                     let url = null;
+                    if(typeof(this.form.birthday) == 'object'){
+                        this.form.birthday = this.form.birthday.toISOString().slice(0, 19).replace('T', ' ');
+                    } else if (typeof(this.form.birthday) == 'string') {
+                        this.form.birthday = new Date(this.form.birthday).toISOString().slice(0, 19).replace('T', ' ');
+
+                    }
+
                     if(this.form.id === 'nc17'){
                         url = '/ehr/patients';
+                        axios.post(url, this.form).then((response) => {
+                            resolve(response);
+                            this.updatePatients();
+                        }).catch((response) => {
+                            reject(response);
+                        })
                     } else {
                         url = '/ehr/patients/'+this.form.id;
+                        axios.put(url, this.form).then((response) => {
+                            resolve(response);
+                            this.updatePatients();
+                        }).catch((response) => {
+                            reject(response);
+                        })
                     }
-                    this.form.birthday = this.form.birthday.toISOString().slice(0, 19).replace('T', ' ');
-                    axios.post(url, this.form).then((response) => {
-                        resolve(response);
-                        this.updatePatients();
-                    }).catch((response) => {
-                        reject(response);
-                    })
                 })
             }
         }
