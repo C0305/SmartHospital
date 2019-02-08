@@ -535,7 +535,8 @@
                 this.openAside()
             },
             editPatient(patient){
-                this.form = patient;
+                this.form = JSON.parse(JSON.stringify(patient));
+                this.form.birthday = new Date(this.form.birthday);
                 this.openAside();
             },
             deletePatient(patient){
@@ -553,7 +554,7 @@
                     let url = null;
                     if(typeof(this.form.birthday) == 'object'){
                         this.form.birthday = this.form.birthday.toISOString().slice(0, 19).replace('T', ' ');
-                    } else if (typeof(this.form.birthday) == 'string') {
+                    } else if (typeof(this.form.birthday) === 'string') {
                         this.form.birthday = new Date(this.form.birthday).toISOString().slice(0, 19).replace('T', ' ');
 
                     }
