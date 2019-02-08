@@ -549,6 +549,10 @@
                     this.modalOpen = false :
                     this.modalOpen = true;
             },
+
+            birthdayFunction(){
+                let birthday()
+            },
             saveForm(){
                 return new Promise((resolve, reject) => {
                     let url = null;
