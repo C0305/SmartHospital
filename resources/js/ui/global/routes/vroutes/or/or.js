@@ -1,9 +1,11 @@
-export default layouts => [
+import { layouts } from "./layouts";
+import procedureTypes from './paths/procedures-types';
+
+export default () => [
     {
-        path: 'patients',
-        props: route => ({
-            path: 'patients',
-            back: false
-        })
+        path: ':or',
+        children: [
+            ...procedureTypes(layouts)
+        ]
     }
 ]

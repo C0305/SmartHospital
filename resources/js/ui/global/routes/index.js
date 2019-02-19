@@ -5,6 +5,7 @@ import { layouts } from "./layouts";
 import home from './vroutes/home'
 import patients from './vroutes/patients'
 import projects from './vroutes/projects';
+import or from './vroutes/or/or';
 
 
 
@@ -27,7 +28,9 @@ export default [
                 children: [
                     ...home(layouts),
                     ...patients(layouts),
-                    ...projects(layouts)]
+                    ...projects(layouts),
+                    ...or(),
+                ]   
             }
         ]
     }

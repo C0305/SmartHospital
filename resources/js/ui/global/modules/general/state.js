@@ -26,7 +26,7 @@ export default {
             childs: [
                 {
                     name: 'Listado de Procedimientos',
-                    route: '/projects',
+                    route: '/or/types',
                     icon: 'fas fa-project-diagram',
                     childs: null,
                 },
