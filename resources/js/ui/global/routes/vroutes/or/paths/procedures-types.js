@@ -1,9 +1,9 @@
 export default layouts => [
     {
-        path: 'types',
+        path: '/or/types',
         component: layouts.proceduresTypes,
         props: route => ({
-            path: 'types',
+            path: '/or/types',
             back: false
         })
     }
