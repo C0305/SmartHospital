@@ -118,7 +118,7 @@
         },
         mounted(){
 
-            this.open('/patients', 'Home')
+            this.open('/orTypes', 'Home')
             /* Scripts for css grid dashboard */
 
             $(document).ready(() => {
