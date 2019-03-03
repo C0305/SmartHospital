@@ -112,13 +112,13 @@
             },
             tabs() {
                 if(this.tabs.length === 0){
-                    this.open('/goals', 'Goals')
+                    this.open('/home', 'Home')
                 }
             }
         },
         mounted(){
 
-            this.open('/patients', 'Home')
+            this.open('/home', 'Home')
             /* Scripts for css grid dashboard */
 
             $(document).ready(() => {
