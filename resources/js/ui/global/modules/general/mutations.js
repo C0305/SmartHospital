@@ -8,6 +8,9 @@ export default {
     mexicoStates(state, payload) {
         state.mexicoStates = payload;
     },
+    menu(state, payload) {
+        state.menu = payload;
+    },
     bacabUpdateValue(state, payload){
         switch(payload){
             case 'patients':

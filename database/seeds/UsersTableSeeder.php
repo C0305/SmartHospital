@@ -37,5 +37,8 @@ class UsersTableSeeder extends Seeder
         foreach($users as $user){
              DB::table('users')->insert($user);
          }
+
+        $admin = \SmartHospital\User::find(1);
+        $admin->assignRole('Admin');
     }
 }

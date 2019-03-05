@@ -17,12 +17,12 @@ class DatabaseSeeder extends Seeder
     
         // Just 4 demo or dummy data
         //$this->call(AccountsCustomerSeeder::class);
-        $this->call(UsersTableSeeder::class);
         $this->call(ProceduresTypesTableSeeder::class);
         $this->call(LocationsTableSeeder::class);
         $this->call(PermissionsTableSeeder::class);
         $this->call(RolesTableSeeder::class);
-        //$this->call(RoleTableSeeder::class);
+        $this->call(UsersTableSeeder::class);
+        $this->call(MenuTable::class);
         //$this->call(RoleHasPermissionsTableSeeder::class);
         //$this->call(DemoPatients::class);
     }

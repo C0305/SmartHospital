@@ -10,3 +10,5 @@ Homestead.yaml
 .env
 
 public/js/app\.js
+public/svg/logo\.svg
+public/svg/logo-back.svg

@@ -4,6 +4,7 @@ namespace SmartHospital\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use SmartHospital\Models\Architecture\Menu;
 use SmartHospital\Models\General\MexicoState;
 
 class HomeController extends Controller
@@ -38,10 +39,30 @@ class HomeController extends Controller
                     'messages' => 'false',
                 ]
             ],
-            'mexicoStates' => MexicoState::select('id','federal_entity as label')->get()
+            'mexicoStates' => MexicoState::select('id','federal_entity as label')->get(),
+            'menu' => $this->getMenu()
         ];
 
         return $data;
+    }
+
+    public function getMenu() {
+        $userPermissions = auth()->user()->getAllPermissions();
+        $viewPermissions = [];
+        foreach ($userPermissions as $permission){
+            if(strpos($permission, 'Ver') !== false){
+                array_push($viewPermissions, $permission['id']);
+            }
+        }
+        $model =  Menu::where('parent_id', '=', null)->select('id','name','icon','path','permission_id')->with('childs')->get()->toArray();
+        foreach ($model as $keya=>$parent){
+            foreach ($parent['childs'] as $keyb=>$child){
+                if(!in_array($child['permission_id'], $viewPermissions)){
+                    unset($model[$keya]['childs'][$keyb]);
+                }
+            }
+        }
+        return $model;
     }
 
 }
