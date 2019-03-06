@@ -1,10 +1,10 @@
 export default {
     methods: {
         closeAside(){
-            this.$store.dispatch('general/bacabAsideOpenClose',false)
+            this.$store.dispatch('general/bacabAside', false)
         },
         openAside(){
-            this.$store.dispatch('general/bacabAsideOpenClose',true)
+            this.$store.dispatch('general/bacabAside', true)
         }
     },
     computed: {

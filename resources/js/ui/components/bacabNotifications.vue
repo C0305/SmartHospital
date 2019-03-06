@@ -1,7 +1,8 @@
 <template>
     <div class="header__notifications">
         <span @click="openAside" class="fas fa-bell"></span>
-        <bacab-plain-aside :close-function="closeAside" :name="'Texto de prueba'" v-if="newElementAside === true">
+        <bacab-simple-aside :close-function="closeAside" :name="'Zona de Notificaciones'"
+                            v-if="newElementAside === true">
             <template slot="content">
                 <div class="box">
                     <div class="box__header">
@@ -14,16 +15,16 @@
                     </div>
                 </div>
             </template>
-        </bacab-plain-aside>
+        </bacab-simple-aside>
     </div>
 </template>
 
 <script>
     import { mapState } from 'vuex';
-    import bacabPlainAside from './bacabPlainAside'
+    import BacabSimpleAside from "./bacabSimpleAside";
     export default {
         name: "bacabNotifications",
-        components: {bacabPlainAside},
+        components: {BacabSimpleAside},
         data() {
             return {
                 newElementAside: false

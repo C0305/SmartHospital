@@ -1,41 +1,39 @@
 <template>
-    <transition name="fade">
-        <div class="lateral-aside">
-            <div class="lateral-aside__top-bar">
-                <span type="button" class="fas fa-times-circle" @click="close"></span>
-                <p> <b>{{ name }}</b></p>
-                <hr>
-            </div>
-            <div class="lateral-aside_content">
-                <div class="lateral-aside_content-panel">
-                    <div class="lateral-aside_content-panel-body">
-                        <slot name="content"></slot>
-                    </div>
+    <div class="lateral-aside">
+        <div class="lateral-aside__top-bar">
+            <span type="button" class="fas fa-times-circle" @click="close"></span>
+            <p><b>{{ name }}</b></p>
+            <hr>
+        </div>
+        <div class="lateral-aside_content">
+            <div class="lateral-aside_content-panel">
+                <div class="lateral-aside_content-panel-body">
+                    <slot name="content"></slot>
                 </div>
             </div>
         </div>
-    </transition>
+    </div>
 </template>
 
 <script>
     export default {
-        name: "bacabPlainAside",
+        name: "bacabSimpleAside",
         props: {
             saveButton: Boolean,
             saveButtonFunction: Function,
             name: String,
             closeFunction: Function,
         },
-        created(){
-            this.$store.dispatch('general/bacabAsideOpenClose', true)
+        created() {
+            this.$store.dispatch('general/bacabSimpleAside')
         },
-        mounted(){
+        mounted() {
             document.body.insertBefore(this.$el, document.body.firstChild)
         },
         methods: {
             close() {
                 this.closeFunction();
-                this.$store.dispatch('general/bacabAsideOpenClose',false)
+                this.$store.dispatch('general/bacabSimpleAside')
 
             },
         }
@@ -79,6 +77,7 @@
         overflow-x: hidden;
         transition: 0.5s;
     }
+
     .lateral-aside__top-bar {
         height: 27px;
         background-color: #FFFFFF;
@@ -117,10 +116,10 @@
         flex: 1;
         width: 96%;
     }
+
     .lateral-aside_content-panel-body {
         color: #333333;
         margin-left: 0;
         margin-right: 0;
     }
-
 </style>

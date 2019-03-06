@@ -48,7 +48,7 @@
             }
         },
         created(){
-            this.$store.dispatch('general/bacabAsideOpenClose', true)
+            this.$store.dispatch('general/bacabAside')
         },
         mounted(){
             document.body.insertBefore(this.$el, document.body.firstChild)

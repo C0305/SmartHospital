@@ -1,6 +1,9 @@
 export default {
-    bacabAsideOpenClose(state, payload) {
+    bacabAside(state, payload) {
         state.bacabUIEvents.bacabAsideOpen = payload;
+    },
+    bacabSimpleAside(state) {
+        state.bacabUIEvents.bacabSimpleAsideStatus = !state.bacabUIEvents.bacabSimpleAsideStatus;
     },
     user(state, payload){
         state.user = payload;

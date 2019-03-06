@@ -11,6 +11,7 @@ export default {
     bacabNotifications: [],
     bacabUIEvents: {
         bacabAsideOpen: false,
+        bacabSimpleAsideStatus: false,
         bacabNewNotification: false,
         reloadValue: {
             patients: 0

@@ -3,6 +3,10 @@ export default {
         context.commit('bacabAsideOpenClose', payload)
     },
 
+    bacabAside(context) {
+        context.commit('bacabAside')
+    },
+
     bacabFirstData(context) {
         axios.get('/show').then( r => {
             context.commit('user', r.data.user);
