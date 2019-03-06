@@ -13,6 +13,6 @@ class Menu extends Model
 
     public function childs(){
         return $this->hasMany( 'SmartHospital\Models\Architecture\Menu', 'parent_id')
-            ->select('id','parent_id','icon','path','permission_id','parent_id');
+            ->select('id', 'name', 'parent_id', 'icon', 'path as route', 'permission_id', 'parent_id');
     }
 }
